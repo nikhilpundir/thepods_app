@@ -5,6 +5,10 @@ import { Formik} from 'formik';
 import * as Yup from 'yup';
 import colors from '../assets/colors';
 const Login = ({ navigation }) => {
+  const formSubmit=(values)=>{
+    console.log(values)
+    navigation.navigate('OtpVerification')
+  }
   return (
     <SafeAreaView>
     <View style={styles.container}>
@@ -20,8 +24,8 @@ const Login = ({ navigation }) => {
          email: Yup.string().email('Invalid email address').required('Required'),
          password: Yup.string().required('No password provided.').min(8, 'Password is too short - should be 8 chars minimum.')
        })}
-       onSubmit={values => console.log(values)}
-       
+       onSubmit={formSubmit}
+      
      >
      {({ handleChange, handleBlur, handleSubmit, values, errors,touched }) => (
        <View style={styles.formContainer}>

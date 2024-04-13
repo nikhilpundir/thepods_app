@@ -15,6 +15,7 @@ import Abhishek from './Abhishek.jpg'
 import welcome from './welcome.png'
 import loginImg from './loginImg.png'
 import signupImg from './signupImg.png'
+import otpImage from './otpImage.png'
 export{
     mainLogo,
     heroImage,
@@ -30,5 +31,6 @@ export{
     Abhishek,
     welcome,
     loginImg,
-    signupImg
+    signupImg,
+    otpImage
 }
