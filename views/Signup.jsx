@@ -31,7 +31,7 @@ const Signup = ({ navigation }) => {
        onSubmit={values => console.log(values)}
        
      >
-     {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
+     {({ handleChange, handleBlur, handleSubmit, values, errors,touched }) => (
        <View style={styles.formContainer}>
         <TextInput
            onChangeText={handleChange('name')}
@@ -40,6 +40,7 @@ const Signup = ({ navigation }) => {
            style={styles.inputBox}
            placeholder='Your name'
          />
+         {errors.name && touched.name && <Text style={styles.errorMsg}>{errors.name}</Text>}
          <TextInput
            onChangeText={handleChange('email')}
            onBlur={handleBlur('email')}
@@ -47,7 +48,7 @@ const Signup = ({ navigation }) => {
            style={styles.inputBox}
            placeholder='Your Email'
          />
-          {errors.email && <Text style={styles.errorMsg}>{errors.email}</Text>}
+          {errors.email && touched.email && <Text style={styles.errorMsg}>{errors.email}</Text>}
           <TextInput
             onChangeText={handleChange('password')}
             onBlur={handleBlur('password')}
@@ -56,7 +57,7 @@ const Signup = ({ navigation }) => {
             style={styles.inputBox}
             placeholder='Password'
           />
-          {errors.password && <Text style={styles.errorMsg}>{errors.password}</Text>}
+          {errors.password && touched.password && <Text style={styles.errorMsg}>{errors.password}</Text>}
           
 
          <Pressable onPress={handleSubmit} style={styles.submitButton} >
