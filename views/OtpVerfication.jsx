@@ -7,7 +7,7 @@ import colors from '../assets/colors';
 const OtpVerfication = ({navigation}) => {
     const formSubmit=(values)=>{
         console.log(values)
-        navigation.navigate('Home')
+        navigation.navigate('App')
       }
   return (
     <SafeAreaView>

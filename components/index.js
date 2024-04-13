@@ -1,8 +1,6 @@
-import HeaderTop from './HeaderTop'
 import Footer from './Footer'
-import PodType from './PodType'
+import PodListItem from './PodListItem'
 export{
-    HeaderTop,
     Footer,
-    PodType
+    PodListItem
 }
