@@ -12,6 +12,9 @@ import era3 from './era3.jpg'
 import AboutImage from './AboutImage.jpg' 
 import NikhilCTO2 from './NikhilCTO2.jpg'
 import Abhishek from './Abhishek.jpg' 
+import welcome from './welcome.png'
+import loginImg from './loginImg.png'
+import signupImg from './signupImg.png'
 export{
     mainLogo,
     heroImage,
@@ -25,4 +28,7 @@ export{
     AboutImage,
     NikhilCTO2,
     Abhishek,
+    welcome,
+    loginImg,
+    signupImg
 }

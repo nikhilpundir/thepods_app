@@ -10,12 +10,14 @@ export default styles = StyleSheet.create({
         display:"flex",
         flexDirection:"row",
         justifyContent:"space-between",
-        alignItems:"center",
+        // alignItems:"center",
         overflow:"hidden",
         borderRadius:30
     },
     Left:{
-        width:"48%"
+        width:"51%",
+        color:colors.black
+        
     },
     Heading:{
         fontSize:25
@@ -27,8 +29,8 @@ export default styles = StyleSheet.create({
         // width:"60%",
     },
     Image:{
-        width:150,
-        height:150,
+        width:140,
+        height:140,
         borderRadius:30
         
     }

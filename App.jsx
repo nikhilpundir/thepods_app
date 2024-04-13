@@ -4,36 +4,22 @@
 
 import React from 'react';
 import {
+  Image,
   SafeAreaView,
-  ScrollView,
-  ScrollViewBase,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Home,Book } from './views';
-import { Footer, HeaderTop } from './components';
-const Tab = createBottomTabNavigator();
+import AuthStack from './navigation/AuthStack'
+
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+const Stack = createNativeStackNavigator();
 function App() {
   return (
+    
     <NavigationContainer>
-    {/* <SafeAreaView> */}
+      <Stack.Navigator screenOptions={{headerShown:false}}>
+        <Stack.Screen name="Auth" component={AuthStack} />
+      </Stack.Navigator>
       
-      {/* <ScrollView showsVerticalScrollIndicator={false}>  */}
-      {/* <HeaderTop /> */}
-        {/* <Home /> */}
-        {/* <Footer /> */}
-        
-      {/* </ScrollView> */}
-    {/* </SafeAreaView> */}
-    <Tab.Navigator>
-        <Tab.Screen name="Home" component={Home} />
-        <Tab.Screen name="Book" component={Book} />
-      </Tab.Navigator>
     </NavigationContainer>
   );
 }

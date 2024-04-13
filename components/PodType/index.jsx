@@ -9,7 +9,7 @@ const index = (props) => {
   return (
     <View style={styles.container}>
       <View style={styles.Left}>
-        <Text style={styles.Heading}>{props.podType}{"\n"}Pod</Text>
+        <Text style={styles.Heading}>{props.podType} Pod</Text>
         <Text style={styles.SubText}>{props.text}</Text>
       </View>
     <View style={styles.Right}>
