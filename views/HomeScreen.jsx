@@ -1,7 +1,7 @@
 import { Text, View,Image, ImageBackground, Button, Pressable, ScrollView, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { mainLogo ,heroImage,classicPod,premiumPod,womenPod,era2, herobgImg} from '../assets/images'
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome6';
 import IconFeather from 'react-native-vector-icons/Feather';
 import {  PodListItem } from '../components';
 import colors from '../assets/colors'
@@ -38,7 +38,7 @@ const HomeScreen = ({navigation}) => {
         <View style={styles.HeaderSection}>
           <Text style={styles.HeaderText}>ThePods</Text>
           <Pressable onPress={HandleProfileClick} style={styles.HeaderProfileIcon}>
-              <IconFeather name="user" size={30} color="black" />
+              <Icon name="user-circle" size={30} color="black" />
               <Text>User</Text>
           </Pressable>
               

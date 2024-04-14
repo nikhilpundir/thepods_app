@@ -2,13 +2,38 @@ import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Book, HomeScreen } from '../views';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import colors from '../assets/colors';
+
+// import IconFeather from 'react-native-vector-icons/Feather';
+
 const Tab = createBottomTabNavigator();
 
 const Home = () => {
   return (
-      <Tab.Navigator screenOptions={{headerShown:false}}>
-        <Tab.Screen name="HomeScreen" component={HomeScreen} />
+      <Tab.Navigator screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+          if (route.name === 'Home') {
+            iconName = focused
+              ? 'home'
+              : 'home-outline';
+          } else if (route.name === 'Book') {
+            iconName = focused ? 'add-circle' : 'add-circle-outline';
+          }else if (route.name === 'Bookings') {
+            iconName = focused ? 'calendar' : 'calendar-outline';
+          }
+
+          // You can return any component that you like here!
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: colors.red,
+        tabBarInactiveTintColor: 'gray',
+        headerShown:false,
+      })}>
+        <Tab.Screen name="Home" component={HomeScreen} />
         <Tab.Screen name="Book" component={Book} />
+        <Tab.Screen name="Bookings" component={Book} />
       </Tab.Navigator>
       
   )
