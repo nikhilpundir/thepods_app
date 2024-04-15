@@ -1,88 +1,220 @@
+// Import necessary components and libraries
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { TextInput, Button, List, Checkbox, RadioButton } from 'react-native-paper';
+import { View, StyleSheet, SafeAreaView, ScrollView, TextInput, Pressable, Text } from 'react-native';
 import { Calendar } from 'react-native-calendars';
-
-const Book = () => {
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+import colors from '../assets/colors';
+// Define the Book component
+const Book = ({navigation}) => {
+  // Define state variables
   const [checkInDate, setCheckInDate] = useState('');
   const [checkOutDate, setCheckOutDate] = useState('');
-  const [numOfGuests, setNumOfGuests] = useState('');
-  const [roomType, setRoomType] = useState('');
-  const [amenities, setAmenities] = useState([]);
+  const formSubmitHandler = (values) => {
+    console.log(values)
+    console.log(checkInDate,checkOutDate)
+    navigation.navigate('Book')
+  }
 
-  const handleCheckboxToggle = (amenity) => {
-    const index = amenities.indexOf(amenity);
-    if (index === -1) {
-      setAmenities([...amenities, amenity]);
-    } else {
-      setAmenities(amenities.filter((item) => item !== amenity));
+  // Handle day press on the calendar
+  const handleDayPress = (day) => {
+    if (!checkInDate || (checkInDate && checkOutDate)) {
+      setCheckInDate(day.dateString);
+      setCheckOutDate('');
+    } else if (checkInDate && !checkOutDate) {
+      // Compare dates to ensure check-in date is smaller than check-out date
+      if (new Date(day.dateString) < new Date(checkInDate)) {
+        setCheckOutDate(checkInDate);
+        setCheckInDate(day.dateString);
+      } else {
+        setCheckOutDate(day.dateString);
+      }
     }
   };
+  const getMiddleDates = (startDate, endDate) => {
+    const middleDates = {};
 
+    let currentDate = new Date(startDate);
+    while (currentDate < new Date(endDate)) {
+      currentDate.setDate(currentDate.getDate() + 1);
+      const dateString = currentDate.toISOString().split('T')[0];
+      if (dateString !== startDate && dateString !== endDate) { // Exclude start and end dates
+        middleDates[dateString] = { color: '#FFE2E3', textColor: 'red' };
+      }
+    }
+    return middleDates;
+  };
   return (
-    <View style={styles.container}>
-      <View style={styles.calendarContainer}>
-        <Calendar
-          onDayPress={(day) => {
-            // Toggle between check-in and check-out dates
-            if (!checkInDate) {
-              setCheckInDate(day.dateString);
-            } else if (!checkOutDate) {
-              setCheckOutDate(day.dateString);
-            } else {
-              setCheckInDate(day.dateString);
-              setCheckOutDate('');
-            }
-          }}
-          markedDates={{
-            [checkInDate]: { startingDay: true, color: '#50cebb' },
-            [checkOutDate]: { endingDay: true, color: '#50cebb' },
-          }}
-        />
-      </View>
-      <TextInput
-        label="Number of Guests"
-        value={numOfGuests}
-        onChangeText={(text) => setNumOfGuests(text)}
-        keyboardType="numeric"
-      />
-      <RadioButton.Group onValueChange={value => setRoomType(value)} value={roomType}>
-        <List.Item title="Standard Room" onPress={() => setRoomType('standard')} />
-        <List.Item title="Deluxe Room" onPress={() => setRoomType('deluxe')} />
-        <List.Item title="Suite" onPress={() => setRoomType('suite')} />
-      </RadioButton.Group>
-      <View>
-        <List.Subheader>Amenities</List.Subheader>
-        <Checkbox.Item
-          label="Free Wi-Fi"
-          status={amenities.includes('Free Wi-Fi') ? 'checked' : 'unchecked'}
-          onPress={() => handleCheckboxToggle('Free Wi-Fi')}
-        />
-        <Checkbox.Item
-          label="Breakfast Included"
-          status={amenities.includes('Breakfast Included') ? 'checked' : 'unchecked'}
-          onPress={() => handleCheckboxToggle('Breakfast Included')}
-        />
-        <Checkbox.Item
-          label="Gym Access"
-          status={amenities.includes('Gym Access') ? 'checked' : 'unchecked'}
-          onPress={() => handleCheckboxToggle('Gym Access')}
-        />
-      </View>
-      <Button mode="contained" onPress={() => console.log('Booking submitted')}>
-        Submit
-      </Button>
-    </View>
+    <SafeAreaView>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.container}>
+          <View style={styles.calendarContainer}>
+            <Calendar
+              onDayPress={handleDayPress}
+              markingType={'period'}
+              minDate={new Date().toISOString()}
+              collapsed={true}
+              markedDates={{
+                [checkInDate]: { startingDay: true, color: '#FFE2E3', textColor: 'red' },
+                [checkOutDate]: { endingDay: true, color: '#FFE2E3', textColor: 'red', },
+                ...getMiddleDates(checkInDate, checkOutDate)
+              }}
+            />
+          </View>
+
+          <Formik
+            initialValues={{ classicPods: '', premiumPods: '', womenPods: '' }}
+            validationSchema={Yup.object({
+              classicPods: Yup.number().min(0, 'Cannot be less than 0').max(10, 'Cannot be more than 10').required('Required'),
+              premiumPods: Yup.number().min(0, 'Cannot be less than 0').max(10, 'Cannot be more than 10').required('Required'),
+              womenPods: Yup.number().min(0, 'Cannot be less than 0').max(10, 'Cannot be more than 10').required('Required'),
+            })}
+            onSubmit={formSubmitHandler}
+
+          >
+            {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+              <View style={styles.formContainer}>
+                <View style={styles.inputLabel}>
+                  <Text>
+                    Classic Pods
+                  </Text>
+                </View>
+                <View style={styles.inputContainer}>
+                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('classicPods')((Math.min(10, parseInt(values.classicPods ? values.classicPods : '0') + 1)).toString())}>
+                    <Text style={styles.buttonText}>+</Text>
+                  </Pressable>
+                  <TextInput
+                    onChangeText={handleChange('classicPods')}
+                    onBlur={handleBlur('classicPods')}
+                    value={values.classicPods}
+                    style={styles.inputBox}
+                    placeholder='0'
+                    maxLength={2}
+                    keyboardType="numeric"
+                    max={10}
+                  />
+
+                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('classicPods')(Math.max(0, parseInt(values.classicPods ? values.classicPods : '0') - 1).toString())}>
+                    <Text style={styles.buttonText}>-</Text>
+                  </Pressable>
+
+                </View>
+
+                {errors.classicPods && touched.classicPods && <Text style={styles.errorMsg}>{errors.classicPods}</Text>}
+                <View style={styles.inputLabel}>
+                  <Text>
+                    Classic Pods
+                  </Text>
+                </View>
+                <View style={styles.inputContainer}>
+                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('premiumPods')((Math.min(10, parseInt(values.premiumPods ? values.premiumPods : '0') + 1)).toString())}>
+                    <Text style={styles.buttonText}>+</Text>
+                  </Pressable>
+                  <TextInput
+                    onChangeText={handleChange('premiumPods')}
+                    onBlur={handleBlur('premiumPods')}
+                    value={values.premiumPods}
+                    style={styles.inputBox}
+                    placeholder='0'
+                    maxLength={2}
+                    keyboardType="numeric"
+                    max={10}
+                  />
+                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('premiumPods')(Math.max(0, parseInt(values.premiumPods ? values.premiumPods : '0') - 1).toString())}>
+                    <Text style={styles.buttonText}>-</Text>
+                  </Pressable>
+                </View>
+
+                {errors.premiumPods && touched.premiumPods && <Text style={styles.errorMsg}>{errors.premiumPods}</Text>}
+                <View style={styles.inputLabel}>
+                  <Text>
+                    Classic Pods
+                  </Text>
+                </View>
+                <View style={styles.inputContainer}>
+                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('womenPods')((Math.min(10, parseInt(values.womenPods ? values.womenPods : '0') + 1)).toString())}>
+                    <Text style={styles.buttonText}>+</Text>
+                  </Pressable>
+                  <TextInput
+                    onChangeText={handleChange('womenPods')}
+                    onBlur={handleBlur('womenPods')}
+                    value={values.womenPods}
+                    style={styles.inputBox}
+                    placeholder='0'
+                    maxLength={2}
+                    keyboardType="numeric"
+                    max={10}
+                  />
+                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('womenPods')(Math.max(0, parseInt(values.womenPods ? values.womenPods : '0') - 1).toString())}>
+                    <Text style={styles.buttonText}>-</Text>
+                  </Pressable>
+                </View>
+                {errors.womenPods && touched.womenPods && <Text style={styles.errorMsg}>{errors.womenPods}</Text>}
+
+                <Pressable onPress={handleSubmit} style={styles.submitButton} >
+                  <Text style={styles.submitButtonText}>Pay</Text>
+                </Pressable>
+              </View>
+            )}
+          </Formik>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
+// Define styles
 const styles = StyleSheet.create({
   container: {
     padding: 20,
   },
   calendarContainer: {
     marginBottom: 20,
+  }, formContainer: {
+    alignSelf: "flex-start",
+    width: "100%",
+  }, inputContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: 'space-between',
+    alignItems: "center",
+    borderColor: '#ccc',
+    borderBottomWidth: 1
   },
+  inputBox: {
+
+
+    // paddingHorizontal: 10,
+
+    width: "50%",
+    textAlign: "center",
+    fontSize: 20,
+  },
+  buttonContainer: {
+
+  },
+  buttonText: {
+    fontSize: 30,
+    paddingHorizontal: 30,
+    color: colors.black,
+  },
+  errorMsg: {
+    color: "red",
+    marginTop: -5,
+    marginBottom: 10
+  },
+  submitButton: {
+    backgroundColor: colors.black,
+    color: colors.white,
+    padding: 15,
+    borderRadius: 5
+  },
+  submitButtonText: {
+    textAlign: "center",
+    color: colors.white,
+    fontSize: 15
+  },
+
 });
 
-export default Book
+export default Book; // Export the Book component

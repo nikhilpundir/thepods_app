@@ -31,9 +31,9 @@ const Home = () => {
         tabBarInactiveTintColor: 'gray',
         headerShown:false,
       })}>
-        <Tab.Screen name="Home" component={HomeScreen} />
+        {/* <Tab.Screen name="Home" component={HomeScreen} /> */}
         <Tab.Screen name="Book" component={Book} />
-        <Tab.Screen name="Bookings" component={Book} />
+        {/* <Tab.Screen name="Bookings" component={Book} /> */}
       </Tab.Navigator>
       
   )

@@ -21,11 +21,11 @@ const OtpVerfication = ({navigation}) => {
       <Formik
        initialValues={{ otp1: '',otp2: '',otp3: '',otp4: '' }}
        validationSchema={Yup.object({
-         otp1: Yup.string().max(1,"enter otp correctly").required('Required'),
-         otp3: Yup.string().max(1).required('Required'),
-         otp2: Yup.string().max(1).required('Required'),
-         otp4: Yup.string().max(1).required('Required'),
-       })}
+        otp1: Yup.string().length(1, 'Must be 1 character').required('Required'),
+        otp2: Yup.string().length(1, 'Must be 1 character').required('Required'),
+        otp3: Yup.string().length(1, 'Must be 1 character').required('Required'),
+        otp4: Yup.string().length(1, 'Must be 1 character').required('Required'),
+      })}
        onSubmit={formSubmit}
       
      >
@@ -37,24 +37,32 @@ const OtpVerfication = ({navigation}) => {
             onBlur={handleBlur('otp1')}
             value={values.otp1}
             style={styles.inputBox}
+            keyboardType="numeric"
+            maxLength={1}
             />
             <TextInput
             onChangeText={handleChange('otp2')}
             onBlur={handleBlur('otp2')}
             value={values.otp2}
             style={styles.inputBox}
+            keyboardType="numeric"
+            maxLength={1}
             />
             <TextInput
             onChangeText={handleChange('otp3')}
             onBlur={handleBlur('otp3')}
             value={values.otp3}
             style={styles.inputBox}
+            keyboardType="numeric"
+            maxLength={1}
             />
             <TextInput
             onChangeText={handleChange('otp4')}
             onBlur={handleBlur('otp4')}
             value={values.otp4}
             style={styles.inputBox}
+            keyboardType="numeric"
+            maxLength={1}
             />
          </View>
           {errors.otp1 && touched.otp1 && <Text style={styles.errorMsg}>{errors.otp1}</Text>}
