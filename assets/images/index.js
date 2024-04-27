@@ -17,6 +17,8 @@ import loginImg from './loginImg.png'
 import signupImg from './signupImg.png'
 import otpImage from './otpImage.png'
 import herobgImg from './herobgImg.jpg'
+import profileBg from './profileBg.png'
+import userImg from './user.jpeg'
 export{
     mainLogo,
     heroImage,
@@ -34,5 +36,7 @@ export{
     loginImg,
     signupImg,
     otpImage,
-    herobgImg
+    herobgImg,
+    profileBg,
+    userImg
 }

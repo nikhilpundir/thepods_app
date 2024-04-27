@@ -5,6 +5,7 @@ import { Calendar } from 'react-native-calendars';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import colors from '../assets/colors';
+import Icon from 'react-native-vector-icons/FontAwesome6';
 // Define the Book component
 const Book = ({navigation}) => {
   // Define state variables
@@ -48,6 +49,11 @@ const Book = ({navigation}) => {
     <SafeAreaView>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
+        <View style={styles.inputLabel}>
+                  <Text style={styles.inputLabelText}>
+                  <Icon name="calendar-plus" size={20} color="black" /> Select Check in and Check out Date
+                  </Text>
+          </View>
           <View style={styles.calendarContainer}>
             <Calendar
               onDayPress={handleDayPress}
@@ -63,7 +69,7 @@ const Book = ({navigation}) => {
           </View>
 
           <Formik
-            initialValues={{ classicPods: '', premiumPods: '', womenPods: '' }}
+            initialValues={{ classicPods: '0', premiumPods: '0', womenPods: '0' }}
             validationSchema={Yup.object({
               classicPods: Yup.number().min(0, 'Cannot be less than 0').max(10, 'Cannot be more than 10').required('Required'),
               premiumPods: Yup.number().min(0, 'Cannot be less than 0').max(10, 'Cannot be more than 10').required('Required'),
@@ -75,8 +81,8 @@ const Book = ({navigation}) => {
             {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
               <View style={styles.formContainer}>
                 <View style={styles.inputLabel}>
-                  <Text>
-                    Classic Pods
+                  <Text style={styles.inputLabelText}>
+                  <Icon name="circle-chevron-right" size={20} color="black" /> Classic Pods
                   </Text>
                 </View>
                 <View style={styles.inputContainer}>
@@ -88,7 +94,7 @@ const Book = ({navigation}) => {
                     onBlur={handleBlur('classicPods')}
                     value={values.classicPods}
                     style={styles.inputBox}
-                    placeholder='0'
+                    // placeholder='0'
                     maxLength={2}
                     keyboardType="numeric"
                     max={10}
@@ -102,8 +108,8 @@ const Book = ({navigation}) => {
 
                 {errors.classicPods && touched.classicPods && <Text style={styles.errorMsg}>{errors.classicPods}</Text>}
                 <View style={styles.inputLabel}>
-                  <Text>
-                    Classic Pods
+                  <Text style={styles.inputLabelText}>
+                  <Icon name="circle-chevron-right" size={20} color="black" /> Premium Pods
                   </Text>
                 </View>
                 <View style={styles.inputContainer}>
@@ -115,7 +121,7 @@ const Book = ({navigation}) => {
                     onBlur={handleBlur('premiumPods')}
                     value={values.premiumPods}
                     style={styles.inputBox}
-                    placeholder='0'
+                    // placeholder='0'
                     maxLength={2}
                     keyboardType="numeric"
                     max={10}
@@ -127,8 +133,8 @@ const Book = ({navigation}) => {
 
                 {errors.premiumPods && touched.premiumPods && <Text style={styles.errorMsg}>{errors.premiumPods}</Text>}
                 <View style={styles.inputLabel}>
-                  <Text>
-                    Classic Pods
+                  <Text style={styles.inputLabelText}>
+                  <Icon name="circle-chevron-right" size={20} color="black" /> Women Pods
                   </Text>
                 </View>
                 <View style={styles.inputContainer}>
@@ -140,7 +146,7 @@ const Book = ({navigation}) => {
                     onBlur={handleBlur('womenPods')}
                     value={values.womenPods}
                     style={styles.inputBox}
-                    placeholder='0'
+                    // placeholder='0'
                     maxLength={2}
                     keyboardType="numeric"
                     max={10}
@@ -182,11 +188,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1
   },
   inputBox: {
-
-
-    // paddingHorizontal: 10,
-
-    width: "50%",
+     width: "50%",
     textAlign: "center",
     fontSize: 20,
   },
@@ -213,6 +215,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: colors.white,
     fontSize: 15
+  },
+  inputLabel:{
+    marginVertical:10,
+    
+  }, inputLabelText:{
+    fontSize:17
   },
 
 });

@@ -1,12 +1,20 @@
-import { Image, SafeAreaView, StyleSheet, Text, View, TextInput, Pressable } from 'react-native'
-import React from 'react'
+import { Image, SafeAreaView, StyleSheet, Text, View, TextInput, Pressable, ScrollView } from 'react-native'
+import React,{useContext} from 'react'
 import {signupImg} from "../assets/images"
 import { Formik} from 'formik';
 import * as Yup from 'yup';
 import colors from '../assets/colors';
+import { AuthContext } from '../context/AuthContext';
 const Signup = ({ navigation }) => {
+  const {signup}=useContext(AuthContext);
+
+  const formSubmit=(values)=>{
+    signup(values);
+    // navigation.navigate('OtpVerification')
+  }
   return (
     <SafeAreaView>
+      <ScrollView>
     <View style={styles.container}>
       <View style={styles.ImageContainer}>
         <Image source={signupImg} style={styles.Image}></Image>
@@ -14,12 +22,13 @@ const Signup = ({ navigation }) => {
       <View style={styles.headingContainer}>
         <Text style={styles.headingText}>Sign up</Text>
       </View>
+
       <Formik
-       initialValues={{ email: '', password: '' }}
+       initialValues={{ name:'',email: '', password: '' }}
        validationSchema={Yup.object({
-        firstName: Yup.string()
+        name: Yup.string()
             .max(50, 'Must be 50 characters or less')
-            .required('No Name provided'),
+            .required('Required'),
          email: Yup.string()
             .email('Invalid email address')
             .required('Required'),
@@ -28,7 +37,7 @@ const Signup = ({ navigation }) => {
             .required('No password provided.')
             .min(8, 'Password is too short - should be 8 chars minimum.')
        })}
-       onSubmit={values => console.log(values)}
+       onSubmit={formSubmit}
        
      >
      {({ handleChange, handleBlur, handleSubmit, values, errors,touched }) => (
@@ -72,6 +81,7 @@ const Signup = ({ navigation }) => {
       <Text style={styles.signupText}>Already have an account ? <Text style={styles.signupTextblue}>Login</Text></Text>
       </Pressable>
       </View>
+      </ScrollView>
     </SafeAreaView>
   )
 }

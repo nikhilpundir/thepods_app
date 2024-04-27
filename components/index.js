@@ -1,6 +1,7 @@
-import Footer from './Footer'
+
 import PodListItem from './PodListItem'
+import ProfileListItem from './ProfileListItem'
 export{
-    Footer,
-    PodListItem
+    PodListItem,
+    ProfileListItem
 }

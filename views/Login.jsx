@@ -1,13 +1,18 @@
 import { Image, SafeAreaView, StyleSheet, Text, View, TextInput, Pressable } from 'react-native'
-import React from 'react'
+import React ,{useContext}from 'react'
 import {loginImg} from "../assets/images"
 import { Formik} from 'formik';
 import * as Yup from 'yup';
 import colors from '../assets/colors';
+import { AuthContext } from '../context/AuthContext';
+import Toast from 'react-native-toast-message';
 const Login = ({ navigation }) => {
+  const {login}=useContext(AuthContext)
+  
+  
   const formSubmit=(values)=>{
-    console.log(values)
-    navigation.navigate('OtpVerification')
+    login(values);
+    
   }
   return (
     <SafeAreaView>
@@ -22,7 +27,7 @@ const Login = ({ navigation }) => {
        initialValues={{ email: '', password: '' }}
        validationSchema={Yup.object({
          email: Yup.string().email('Invalid email address').required('Required'),
-         password: Yup.string().required('No password provided.').min(8, 'Password is too short - should be 8 chars minimum.')
+         password: Yup.string().required('No password provided.').min(6, 'Password is too short - should be 8 chars minimum.')
        })}
        onSubmit={formSubmit}
       

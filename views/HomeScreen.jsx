@@ -1,16 +1,18 @@
 import { Text, View,Image, ImageBackground, Button, Pressable, ScrollView, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React,{useContext} from 'react'
 import { mainLogo ,heroImage,classicPod,premiumPod,womenPod,era2, herobgImg} from '../assets/images'
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import IconFeather from 'react-native-vector-icons/Feather';
 import {  PodListItem } from '../components';
 import colors from '../assets/colors'
+import { AuthContext } from '../context/AuthContext';
 
 
 
 const HomeScreen = ({navigation}) => {
+  const {user}=useContext(AuthContext);
   const HandleProfileClick=()=>{
-      navigation.navigate("Profile")
+      navigation.navigate("ProfileMain")
   }
   const HandleBookNow=()=>{
     navigation.navigate("Book")
@@ -39,7 +41,7 @@ const HomeScreen = ({navigation}) => {
           <Text style={styles.HeaderText}>ThePods</Text>
           <Pressable onPress={HandleProfileClick} style={styles.HeaderProfileIcon}>
               <Icon name="user-circle" size={30} color="black" />
-              <Text>User</Text>
+              <Text>{user?.name || 'user'}</Text>
           </Pressable>
               
         </View>
