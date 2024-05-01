@@ -7,13 +7,13 @@ import * as Yup from 'yup';
 import colors from '../assets/colors';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 // Define the Book component
-const Book = ({navigation}) => {
+const Book = ({ navigation }) => {
   // Define state variables
   const [checkInDate, setCheckInDate] = useState('');
   const [checkOutDate, setCheckOutDate] = useState('');
   const formSubmitHandler = (values) => {
     console.log(values)
-    console.log(checkInDate,checkOutDate)
+    console.log(checkInDate, checkOutDate)
     navigation.navigate('Book')
   }
 
@@ -49,10 +49,10 @@ const Book = ({navigation}) => {
     <SafeAreaView>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
-        <View style={styles.inputLabel}>
-                  <Text style={styles.inputLabelText}>
-                  <Icon name="calendar-plus" size={20} color="black" /> Select Check in and Check out Date
-                  </Text>
+          <View style={styles.inputLabel}>
+            <Text style={styles.inputLabelText}>
+              <Icon name="calendar-plus" size={20} color="black" /> Select Check in and Check out Date
+            </Text>
           </View>
           <View style={styles.calendarContainer}>
             <Calendar
@@ -82,13 +82,14 @@ const Book = ({navigation}) => {
               <View style={styles.formContainer}>
                 <View style={styles.inputLabel}>
                   <Text style={styles.inputLabelText}>
-                  <Icon name="circle-chevron-right" size={20} color="black" /> Classic Pods
+                    <Icon name="circle-chevron-right" size={20} color="black" /> Classic Pods
                   </Text>
                 </View>
                 <View style={styles.inputContainer}>
-                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('classicPods')((Math.min(10, parseInt(values.classicPods ? values.classicPods : '0') + 1)).toString())}>
-                    <Text style={styles.buttonText}>+</Text>
+                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('classicPods')(Math.max(0, parseInt(values.classicPods ? values.classicPods : '0') - 1).toString())}>
+                    <Text style={styles.buttonText}>-</Text>
                   </Pressable>
+
                   <TextInput
                     onChangeText={handleChange('classicPods')}
                     onBlur={handleBlur('classicPods')}
@@ -99,22 +100,22 @@ const Book = ({navigation}) => {
                     keyboardType="numeric"
                     max={10}
                   />
-
-                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('classicPods')(Math.max(0, parseInt(values.classicPods ? values.classicPods : '0') - 1).toString())}>
-                    <Text style={styles.buttonText}>-</Text>
+                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('classicPods')((Math.min(10, parseInt(values.classicPods ? values.classicPods : '0') + 1)).toString())}>
+                    <Text style={styles.buttonText}>+</Text>
                   </Pressable>
+
 
                 </View>
 
                 {errors.classicPods && touched.classicPods && <Text style={styles.errorMsg}>{errors.classicPods}</Text>}
                 <View style={styles.inputLabel}>
                   <Text style={styles.inputLabelText}>
-                  <Icon name="circle-chevron-right" size={20} color="black" /> Premium Pods
+                    <Icon name="circle-chevron-right" size={20} color="black" /> Premium Pods
                   </Text>
                 </View>
                 <View style={styles.inputContainer}>
-                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('premiumPods')((Math.min(10, parseInt(values.premiumPods ? values.premiumPods : '0') + 1)).toString())}>
-                    <Text style={styles.buttonText}>+</Text>
+                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('premiumPods')(Math.max(0, parseInt(values.premiumPods ? values.premiumPods : '0') - 1).toString())}>
+                    <Text style={styles.buttonText}>-</Text>
                   </Pressable>
                   <TextInput
                     onChangeText={handleChange('premiumPods')}
@@ -126,20 +127,21 @@ const Book = ({navigation}) => {
                     keyboardType="numeric"
                     max={10}
                   />
-                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('premiumPods')(Math.max(0, parseInt(values.premiumPods ? values.premiumPods : '0') - 1).toString())}>
-                    <Text style={styles.buttonText}>-</Text>
+                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('premiumPods')((Math.min(10, parseInt(values.premiumPods ? values.premiumPods : '0') + 1)).toString())}>
+                    <Text style={styles.buttonText}>+</Text>
                   </Pressable>
+
                 </View>
 
                 {errors.premiumPods && touched.premiumPods && <Text style={styles.errorMsg}>{errors.premiumPods}</Text>}
                 <View style={styles.inputLabel}>
                   <Text style={styles.inputLabelText}>
-                  <Icon name="circle-chevron-right" size={20} color="black" /> Women Pods
+                    <Icon name="circle-chevron-right" size={20} color="black" /> Women Pods
                   </Text>
                 </View>
                 <View style={styles.inputContainer}>
-                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('womenPods')((Math.min(10, parseInt(values.womenPods ? values.womenPods : '0') + 1)).toString())}>
-                    <Text style={styles.buttonText}>+</Text>
+                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('womenPods')(Math.max(0, parseInt(values.womenPods ? values.womenPods : '0') - 1).toString())}>
+                    <Text style={styles.buttonText}>-</Text>
                   </Pressable>
                   <TextInput
                     onChangeText={handleChange('womenPods')}
@@ -151,9 +153,10 @@ const Book = ({navigation}) => {
                     keyboardType="numeric"
                     max={10}
                   />
-                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('womenPods')(Math.max(0, parseInt(values.womenPods ? values.womenPods : '0') - 1).toString())}>
-                    <Text style={styles.buttonText}>-</Text>
+                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('womenPods')((Math.min(10, parseInt(values.womenPods ? values.womenPods : '0') + 1)).toString())}>
+                    <Text style={styles.buttonText}>+</Text>
                   </Pressable>
+
                 </View>
                 {errors.womenPods && touched.womenPods && <Text style={styles.errorMsg}>{errors.womenPods}</Text>}
 
@@ -188,7 +191,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1
   },
   inputBox: {
-     width: "50%",
+    width: "50%",
     textAlign: "center",
     fontSize: 20,
   },
@@ -216,11 +219,11 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontSize: 15
   },
-  inputLabel:{
-    marginVertical:10,
-    
-  }, inputLabelText:{
-    fontSize:17
+  inputLabel: {
+    marginVertical: 10,
+
+  }, inputLabelText: {
+    fontSize: 17
   },
 
 });
