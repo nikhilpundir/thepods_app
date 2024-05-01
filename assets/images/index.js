@@ -19,6 +19,7 @@ import otpImage from './otpImage.png'
 import herobgImg from './herobgImg.jpg'
 import profileBg from './profileBg.png'
 import userImg from './user.jpeg'
+import bookingsBg from './bookingsBg.png'
 export{
     mainLogo,
     heroImage,
@@ -38,5 +39,6 @@ export{
     otpImage,
     herobgImg,
     profileBg,
-    userImg
+    userImg,
+    bookingsBg
 }

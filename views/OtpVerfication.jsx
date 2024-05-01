@@ -5,27 +5,28 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import colors from '../assets/colors';
 import { AuthContext } from '../context/AuthContext';
-
+import Icon from 'react-native-vector-icons/FontAwesome6';
 const OtpVerification = ({ navigation }) => {
-    const {otpVerify,verify,resendOtp} = useContext(AuthContext)
+    const {otpVerify,verify,resendOtp,resetLocalUser} = useContext(AuthContext)
     const otp1Ref = useRef(null);
     const otp2Ref = useRef(null);
     const otp3Ref = useRef(null);
     const otp4Ref = useRef(null);
 
     const formSubmit = (values) => {
-        console.log(values);
         let otp='';
         Object.keys(values).forEach(key => {
             otp += values[key];
         });
-        console.log(otp);
-        otpVerify(otp)
+        otpVerify({otp:otp})
         // verify()
         navigation.navigate('App');
     }
     const resendHandler=()=>{
         resendOtp();
+    }
+    const handleCancel=()=>{
+        resetLocalUser();
     }
 
     const focusNextInput = (nextInputRef) => {
@@ -36,7 +37,13 @@ const OtpVerification = ({ navigation }) => {
 
     return (
         <SafeAreaView>
+            <View style={styles.cancelContainer}>
+                    <Pressable style={styles.cancelInnerContainer} onPress={handleCancel}>
+                       <Text style={styles.cancelText}><Icon name="angle-left" size={23} color="black" /> cancel</Text>
+                    </Pressable>
+            </View>
             <View style={styles.container}>
+                
                 <View style={styles.ImageContainer}>
                     <Image source={otpImage} style={styles.Image}></Image>
                 </View>
@@ -182,6 +189,17 @@ const styles = StyleSheet.create({
       textAlign:"center",
       color:colors.white,
       fontSize:15
+    },
+    cancelContainer:{
+        padding:8,
+        width:"20%"
+    },
+    cancelInnerContainer:{
+      
+    },
+    cancelText:{
+        fontSize:20,
+        color:"black"
+        
     }
-    
   })

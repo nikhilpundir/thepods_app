@@ -9,7 +9,6 @@ const AuthStack = () => {
       <Stack.Navigator screenOptions={{headerShown:false}}> 
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Signup" component={Signup} />
-        {/* <Stack.Screen name="OtpVerification" component={OtpVerfication} /> */}
       </Stack.Navigator>
 
   )

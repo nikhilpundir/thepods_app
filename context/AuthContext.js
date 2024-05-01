@@ -72,7 +72,6 @@ export const AuthProvider = ({ children }) => {
             }
         }).then(response => {
             try {
-                console.log(response.data);
                 AsyncStorage.setItem('user', JSON.stringify(response.data));
                 setUser(response.data);
             } catch (error) {
@@ -144,11 +143,19 @@ export const AuthProvider = ({ children }) => {
                 text1: errorMessage,
                 text2: 'Please try again!'
             });
+        
         })
         .finally(() => {
             setIsLoading(false);
         });
     };
+
+    const resetLocalUser=()=>{
+        setIsLoading(true)
+        setUser(null);
+        AsyncStorage.removeItem('user')
+        setIsLoading(false);
+    }
 
     const resendOtp=(body)=>{
         setIsLoading(true);
@@ -172,20 +179,6 @@ export const AuthProvider = ({ children }) => {
     };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     const isLoggedIn = async () => {
         try {
             setIsLoading(true)
@@ -202,7 +195,7 @@ export const AuthProvider = ({ children }) => {
     }, [])
 
     return (
-        <AuthContext.Provider value={{ login, logout, isLoading, user,signup,otpVerify,verify,resendOtp }}>
+        <AuthContext.Provider value={{ login, logout, isLoading, user,signup,otpVerify,verify,resendOtp,resetLocalUser }}>
             {children}
         </AuthContext.Provider>
     )
