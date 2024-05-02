@@ -1,37 +1,99 @@
 // Import necessary components and libraries
-import React, { useState } from 'react';
-import { View, StyleSheet, SafeAreaView, ScrollView, TextInput, Pressable, Text } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
+import { View, StyleSheet, SafeAreaView, ScrollView, TextInput, Pressable, Text, Button, TouchableHighlight } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import colors from '../assets/colors';
 import Icon from 'react-native-vector-icons/FontAwesome6';
+import RazorpayCheckout from 'react-native-razorpay';
+import { PaymentContext } from '../context/PaymentContext';
+import { mainLogojpg } from '../assets/images';
+import { AuthContext } from '../context/AuthContext';
+import { BookingContext } from '../context/BookingContext';
 // Define the Book component
 const Book = ({ navigation }) => {
+  const {user}= useContext(AuthContext);
   // Define state variables
+  const [calCheckInDate, setCalCheckInDate] = useState('');
+  const [calCheckOutDate, setCalCheckOutDate] = useState('');
   const [checkInDate, setCheckInDate] = useState('');
   const [checkOutDate, setCheckOutDate] = useState('');
-  const formSubmitHandler = (values) => {
-    console.log(values)
-    console.log(checkInDate, checkOutDate)
-    navigation.navigate('Book')
+  const [totalAmount, setTotalAmount] = useState(0);
+
+  const { getPaymentKey, checkout ,paymentVerification} = useContext(PaymentContext);
+  const {bookingConfirm} = useContext(BookingContext);
+
+
+  useEffect(() => {
+    setCheckInDate(new Date(calCheckInDate));
+    setCheckOutDate(new Date(calCheckOutDate));
+  }, [calCheckInDate, calCheckOutDate])
+
+  const formSubmitHandler = async (values) => {
+    const classicPodsPrice = parseInt(values.numberOfClassicPods) * 200;
+    const premiumPodsPrice = parseInt(values.numberOfPremiumPods) * 200;
+    const womenPodsPrice = parseInt(values.numberOfWomenPods) * 400;
+    const calctotalAmount = (classicPodsPrice + premiumPodsPrice + womenPodsPrice) * getNumberOfDays();
+    setTotalAmount(isNaN(calctotalAmount) ? 0 : calctotalAmount);
+    // console.log({ ...values, checkIn: checkInDate, checkOut: checkOutDate, amount: totalAmount });
+    const keyResponse= await getPaymentKey();
+    const key= keyResponse.key;
+    console.log(key);
+    console.log({ ...values, checkIn: checkInDate, checkOut: checkOutDate, amount: totalAmount });
+    const orderResponse = await checkout({ ...values, checkIn: checkInDate, checkOut: checkOutDate, amount: totalAmount });
+    const order = orderResponse.order;
+    
+    var options = {
+      description: 'Booking',
+      image: mainLogojpg,
+      currency: 'INR',
+      key,
+      amount: order.amount,
+      name: 'ThePods',
+      order_id: order.id,//Replace this with an order_id created using Orders API.
+      prefill: {
+        name: user.name,
+        email: user.email,
+      },
+      theme: {color: '#53a20e'}
+    }
+
+    RazorpayCheckout.open(options).then((data) => {
+      // handle success
+      paymentVerification({razorpay_payment_id:data.razorpay_payment_id,razorpay_order_id:data.razorpay_order_id,razorpay_signature:data.razorpay_signature})
+      bookingConfirm({
+        userId: user._id,
+        paymentId: data.razorpay_payment_id,
+        checkIn: checkInDate,
+        checkOut: checkOutDate,
+        numberOfClassicPods: values.numberOfClassicPods,
+        numberOfWomenPods: values.numberOfWomenPods,
+        numberOfPremiumPods: values.numberOfPremiumPods,
+      })
+      
+      alert(`Success: ${data.razorpay_payment_id}`);
+    }).catch((error) => {
+      // handle failure
+      alert(`Error: ${error.code} | ${error.description}`);
+    });
   }
 
   // Handle day press on the calendar
   const handleDayPress = (day) => {
-    if (!checkInDate || (checkInDate && checkOutDate)) {
-      setCheckInDate(day.dateString);
-      setCheckOutDate('');
-    } else if (checkInDate && !checkOutDate) {
-      // Compare dates to ensure check-in date is smaller than check-out date
-      if (new Date(day.dateString) < new Date(checkInDate)) {
-        setCheckOutDate(checkInDate);
-        setCheckInDate(day.dateString);
+    if (!calCheckInDate || (calCheckInDate && calCheckOutDate)) {
+      setCalCheckInDate(day.dateString);
+      setCalCheckOutDate('');
+    } else if (calCheckInDate && !calCheckOutDate) {
+      if (new Date(day.dateString) < new Date(calCheckInDate)) {
+        setCalCheckOutDate(calCheckInDate);
+        setCalCheckInDate(day.dateString);
       } else {
-        setCheckOutDate(day.dateString);
+        setCalCheckOutDate(day.dateString);
       }
     }
   };
+
   const getMiddleDates = (startDate, endDate) => {
     const middleDates = {};
 
@@ -45,6 +107,12 @@ const Book = ({ navigation }) => {
     }
     return middleDates;
   };
+  const getNumberOfDays = () => {
+    const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+    const diffDays = Math.round(Math.abs((checkInDate - checkOutDate) / oneDay) + 1);
+    return diffDays;
+  };
+
   return (
     <SafeAreaView>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -61,111 +129,122 @@ const Book = ({ navigation }) => {
               minDate={new Date().toISOString()}
               collapsed={true}
               markedDates={{
-                [checkInDate]: { startingDay: true, color: '#FFE2E3', textColor: 'red' },
-                [checkOutDate]: { endingDay: true, color: '#FFE2E3', textColor: 'red', },
-                ...getMiddleDates(checkInDate, checkOutDate)
+                [calCheckInDate]: { startingDay: true, color: '#FFE2E3', textColor: 'red' },
+                [calCheckOutDate]: { endingDay: true, color: '#FFE2E3', textColor: 'red', },
+                ...getMiddleDates(calCheckInDate, calCheckOutDate)
               }}
             />
+            <Text style={styles.dates}>CheckIn Date : {calCheckInDate}</Text>
+            <Text style={styles.dates}>CheckOut Date : {calCheckOutDate}</Text>
+
           </View>
 
           <Formik
-            initialValues={{ classicPods: '0', premiumPods: '0', womenPods: '0' }}
+            initialValues={{ numberOfClassicPods: '0', numberOfPremiumPods: '0', numberOfWomenPods: '0' }}
             validationSchema={Yup.object({
-              classicPods: Yup.number().min(0, 'Cannot be less than 0').max(10, 'Cannot be more than 10').required('Required'),
-              premiumPods: Yup.number().min(0, 'Cannot be less than 0').max(10, 'Cannot be more than 10').required('Required'),
-              womenPods: Yup.number().min(0, 'Cannot be less than 0').max(10, 'Cannot be more than 10').required('Required'),
+              numberOfClassicPods: Yup.number().min(0, 'Cannot be less than 0').max(10, 'Cannot be more than 10').required('Required'),
+              numberOfPremiumPods: Yup.number().min(0, 'Cannot be less than 0').max(10, 'Cannot be more than 10').required('Required'),
+              numberOfWomenPods: Yup.number().min(0, 'Cannot be less than 0').max(10, 'Cannot be more than 10').required('Required'),
             })}
+            validateOnChange={false} // Disable auto-validation on change to improve performance
+            validateOnBlur={true} // Validate on blur of input fields
+            validateOnMount={true}
             onSubmit={formSubmitHandler}
 
           >
             {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
               <View style={styles.formContainer}>
+
                 <View style={styles.inputLabel}>
                   <Text style={styles.inputLabelText}>
                     <Icon name="circle-chevron-right" size={20} color="black" /> Classic Pods
                   </Text>
                 </View>
                 <View style={styles.inputContainer}>
-                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('classicPods')(Math.max(0, parseInt(values.classicPods ? values.classicPods : '0') - 1).toString())}>
+                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('numberOfClassicPods')(Math.max(0, parseInt(values.numberOfClassicPods ? values.numberOfClassicPods : '0') - 1).toString())}>
                     <Text style={styles.buttonText}>-</Text>
                   </Pressable>
 
                   <TextInput
-                    onChangeText={handleChange('classicPods')}
-                    onBlur={handleBlur('classicPods')}
-                    value={values.classicPods}
+                    onChangeText={handleChange('numberOfClassicPods')}
+                    onBlur={handleBlur('numberOfClassicPods')}
+                    value={values.numberOfClassicPods}
                     style={styles.inputBox}
                     // placeholder='0'
                     maxLength={2}
                     keyboardType="numeric"
                     max={10}
                   />
-                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('classicPods')((Math.min(10, parseInt(values.classicPods ? values.classicPods : '0') + 1)).toString())}>
+                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('numberOfClassicPods')((Math.min(10, parseInt(values.numberOfClassicPods ? values.numberOfClassicPods : '0') + 1)).toString())}>
                     <Text style={styles.buttonText}>+</Text>
                   </Pressable>
 
 
                 </View>
+                {errors.numberOfClassicPods && touched.numberOfClassicPods && <Text style={styles.errorMsg}>{errors.numberOfClassicPods}</Text>}
 
-                {errors.classicPods && touched.classicPods && <Text style={styles.errorMsg}>{errors.classicPods}</Text>}
                 <View style={styles.inputLabel}>
                   <Text style={styles.inputLabelText}>
                     <Icon name="circle-chevron-right" size={20} color="black" /> Premium Pods
                   </Text>
                 </View>
                 <View style={styles.inputContainer}>
-                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('premiumPods')(Math.max(0, parseInt(values.premiumPods ? values.premiumPods : '0') - 1).toString())}>
+                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('numberOfPremiumPods')(Math.max(0, parseInt(values.numberOfPremiumPods ? values.numberOfPremiumPods : '0') - 1).toString())}>
                     <Text style={styles.buttonText}>-</Text>
                   </Pressable>
                   <TextInput
-                    onChangeText={handleChange('premiumPods')}
-                    onBlur={handleBlur('premiumPods')}
-                    value={values.premiumPods}
+                    onChangeText={handleChange('numberOfPremiumPods')}
+                    onBlur={handleBlur('numberOfPremiumPods')}
+                    value={values.numberOfPremiumPods}
                     style={styles.inputBox}
                     // placeholder='0'
                     maxLength={2}
                     keyboardType="numeric"
                     max={10}
                   />
-                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('premiumPods')((Math.min(10, parseInt(values.premiumPods ? values.premiumPods : '0') + 1)).toString())}>
+                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('numberOfPremiumPods')((Math.min(10, parseInt(values.numberOfPremiumPods ? values.numberOfPremiumPods : '0') + 1)).toString())}>
                     <Text style={styles.buttonText}>+</Text>
                   </Pressable>
 
                 </View>
+                {errors.numberOfPremiumPods && touched.numberOfPremiumPods && <Text style={styles.errorMsg}>{errors.numberOfPremiumPods}</Text>}
 
-                {errors.premiumPods && touched.premiumPods && <Text style={styles.errorMsg}>{errors.premiumPods}</Text>}
                 <View style={styles.inputLabel}>
                   <Text style={styles.inputLabelText}>
                     <Icon name="circle-chevron-right" size={20} color="black" /> Women Pods
                   </Text>
                 </View>
                 <View style={styles.inputContainer}>
-                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('womenPods')(Math.max(0, parseInt(values.womenPods ? values.womenPods : '0') - 1).toString())}>
+                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('numberOfWomenPods')(Math.max(0, parseInt(values.numberOfWomenPods ? values.numberOfWomenPods : '0') - 1).toString())}>
                     <Text style={styles.buttonText}>-</Text>
                   </Pressable>
                   <TextInput
-                    onChangeText={handleChange('womenPods')}
-                    onBlur={handleBlur('womenPods')}
-                    value={values.womenPods}
+                    onChangeText={handleChange('numberOfWomenPods')}
+                    onBlur={handleBlur('numberOfWomenPods')}
+                    value={values.numberOfWomenPods}
                     style={styles.inputBox}
                     // placeholder='0'
                     maxLength={2}
                     keyboardType="numeric"
                     max={10}
                   />
-                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('womenPods')((Math.min(10, parseInt(values.womenPods ? values.womenPods : '0') + 1)).toString())}>
+                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('numberOfWomenPods')((Math.min(10, parseInt(values.numberOfWomenPods ? values.numberOfWomenPods : '0') + 1)).toString())}>
                     <Text style={styles.buttonText}>+</Text>
                   </Pressable>
 
                 </View>
-                {errors.womenPods && touched.womenPods && <Text style={styles.errorMsg}>{errors.womenPods}</Text>}
+                {errors.numberOfWomenPods && touched.numberOfWomenPods && <Text style={styles.errorMsg}>{errors.numberOfWomenPods}</Text>}
+
+                
 
                 <Pressable onPress={handleSubmit} style={styles.submitButton} >
                   <Text style={styles.submitButtonText}>Pay</Text>
                 </Pressable>
+
               </View>
             )}
           </Formik>
+
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -225,6 +304,11 @@ const styles = StyleSheet.create({
   }, inputLabelText: {
     fontSize: 17
   },
+  dates: {
+    paddingVertical: 5,
+    fontSize: 18,
+    color: "black"
+  }
 
 });
 

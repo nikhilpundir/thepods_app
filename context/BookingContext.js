@@ -29,10 +29,24 @@ export const BookingContextProvider=({children})=>{
         })
         setIsLoading(false);
     }
-
+    const bookingConfirm=(body)=>{
+        setIsLoading(true);
+        axios.post(`${BOOKING_URL}/bookingconfirmation`,body ,{
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        })
+        .then(response=>{
+            console.log(response.data);
+        })
+        .catch(error=>{
+            console.log(error);
+        })
+        setIsLoading(false);
+    }
 
     return(
-        <BookingContext.Provider value={{bookings,isLoading,getBooking}}>
+        <BookingContext.Provider value={{bookings,isLoading,getBooking,bookingConfirm}}>
             {children}
         </BookingContext.Provider>
     )

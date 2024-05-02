@@ -20,6 +20,7 @@ import herobgImg from './herobgImg.jpg'
 import profileBg from './profileBg.png'
 import userImg from './user.jpeg'
 import bookingsBg from './bookingsBg.png'
+import mainLogojpg from './mainLogo.jpg'
 export{
     mainLogo,
     heroImage,
@@ -40,5 +41,6 @@ export{
     herobgImg,
     profileBg,
     userImg,
-    bookingsBg
+    bookingsBg,
+    mainLogojpg
 }
