@@ -1,4 +1,4 @@
-import { FlatList, Image, RefreshControl, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Image, RefreshControl, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import React, { useContext, useEffect } from 'react';
 import { bookingsBg } from '../assets/images';
 import { BookingsListItem } from '../components';
@@ -16,7 +16,7 @@ const Bookings = () => {
   useEffect(() => {
     getBooking({ userId: user?._id });
   }, []);
-
+  
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.heroContainer}>

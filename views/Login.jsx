@@ -1,18 +1,24 @@
-import { Image, SafeAreaView, StyleSheet, Text, View, TextInput, Pressable } from 'react-native'
+import { Image, SafeAreaView, StyleSheet, Text, View, TextInput, Pressable, ActivityIndicator } from 'react-native'
 import React ,{useContext}from 'react'
 import {loginImg} from "../assets/images"
 import { Formik} from 'formik';
 import * as Yup from 'yup';
 import colors from '../assets/colors';
 import { AuthContext } from '../context/AuthContext';
-import Toast from 'react-native-toast-message';
 const Login = ({ navigation }) => {
-  const {login}=useContext(AuthContext)
+  const {login,isLoading}=useContext(AuthContext)
   
   
   const formSubmit=(values)=>{
     login(values);
     
+  }
+  if(isLoading){
+    return(
+      <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+      <ActivityIndicator size={'large'} />
+    </View>
+    )
   }
   return (
     <SafeAreaView>

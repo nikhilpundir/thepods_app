@@ -1,6 +1,6 @@
 // Import necessary components and libraries
 import React, { useContext, useEffect, useState } from 'react';
-import { View, StyleSheet, SafeAreaView, ScrollView, TextInput, Pressable, Text, Button, TouchableHighlight } from 'react-native';
+import { View, StyleSheet, SafeAreaView, ScrollView, TextInput, Pressable, Text, Button, TouchableHighlight, ActivityIndicator } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -11,6 +11,7 @@ import { PaymentContext } from '../context/PaymentContext';
 import { mainLogojpg } from '../assets/images';
 import { AuthContext } from '../context/AuthContext';
 import { BookingContext } from '../context/BookingContext';
+import Toast from "react-native-toast-message";
 // Define the Book component
 const Book = ({ navigation }) => {
   const {user}= useContext(AuthContext);
@@ -21,7 +22,7 @@ const Book = ({ navigation }) => {
   const [checkOutDate, setCheckOutDate] = useState('');
   const [totalAmount, setTotalAmount] = useState(0);
 
-  const { getPaymentKey, checkout ,paymentVerification} = useContext(PaymentContext);
+  const { getPaymentKey, checkout ,paymentVerification,isLoading} = useContext(PaymentContext);
   const {bookingConfirm} = useContext(BookingContext);
 
 
@@ -37,46 +38,93 @@ const Book = ({ navigation }) => {
     const calctotalAmount = (classicPodsPrice + premiumPodsPrice + womenPodsPrice) * getNumberOfDays();
     setTotalAmount(isNaN(calctotalAmount) ? 0 : calctotalAmount);
     // console.log({ ...values, checkIn: checkInDate, checkOut: checkOutDate, amount: totalAmount });
-    const keyResponse= await getPaymentKey();
-    const key= keyResponse.key;
-    console.log(key);
-    console.log({ ...values, checkIn: checkInDate, checkOut: checkOutDate, amount: totalAmount });
-    const orderResponse = await checkout({ ...values, checkIn: checkInDate, checkOut: checkOutDate, amount: totalAmount });
-    const order = orderResponse.order;
     
-    var options = {
-      description: 'Booking',
-      image: mainLogojpg,
-      currency: 'INR',
-      key,
-      amount: order.amount,
-      name: 'ThePods',
-      order_id: order.id,//Replace this with an order_id created using Orders API.
-      prefill: {
-        name: user.name,
-        email: user.email,
-      },
-      theme: {color: '#53a20e'}
-    }
-
-    RazorpayCheckout.open(options).then((data) => {
-      // handle success
-      paymentVerification({razorpay_payment_id:data.razorpay_payment_id,razorpay_order_id:data.razorpay_order_id,razorpay_signature:data.razorpay_signature})
-      bookingConfirm({
-        userId: user._id,
-        paymentId: data.razorpay_payment_id,
-        checkIn: checkInDate,
-        checkOut: checkOutDate,
-        numberOfClassicPods: values.numberOfClassicPods,
-        numberOfWomenPods: values.numberOfWomenPods,
-        numberOfPremiumPods: values.numberOfPremiumPods,
-      })
-      
-      alert(`Success: ${data.razorpay_payment_id}`);
-    }).catch((error) => {
-      // handle failure
-      alert(`Error: ${error.code} | ${error.description}`);
+    try {
+      const keyResponse= await getPaymentKey();
+      const key= keyResponse.key;
+      const orderResponse = await checkout({ ...values, checkIn: checkInDate, checkOut: checkOutDate, amount: totalAmount });
+      const order = orderResponse.order;
+      var options = {
+        description: 'Booking',
+        image: mainLogojpg,
+        currency: 'INR',
+        key,
+        amount: order.amount,
+        name: 'ThePods',
+        order_id: order.id,//Replace this with an order_id created using Orders API.
+        prefill: {
+          name: user.name,
+          email: user.email,
+        },
+        theme: {color: '#53a20e'}
+      }
+  
+      RazorpayCheckout.open(options).then((data) => {
+        // handle success
+        paymentVerification({razorpay_payment_id:data.razorpay_payment_id,razorpay_order_id:data.razorpay_order_id,razorpay_signature:data.razorpay_signature})
+        bookingConfirm({
+          userId: user._id,
+          paymentId: data.razorpay_payment_id,
+          checkIn: checkInDate,
+          checkOut: checkOutDate,
+          numberOfClassicPods: values.numberOfClassicPods,
+          numberOfWomenPods: values.numberOfWomenPods,
+          numberOfPremiumPods: values.numberOfPremiumPods,
+        })
+        
+        // alert(`Success: ${data.razorpay_payment_id}`);
+        
+        navigation.navigate('Bookings')
+      }).catch((error) => {
+        // handle failure
+        alert(`Error: ${error.code} | ${error.description}`);
+      });
+  
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: error,
+        text2: 'Please try again!'
     });
+    }
+   
+    
+    // var options = {
+    //   description: 'Booking',
+    //   image: mainLogojpg,
+    //   currency: 'INR',
+    //   key,
+    //   amount: order.amount,
+    //   name: 'ThePods',
+    //   order_id: order.id,//Replace this with an order_id created using Orders API.
+    //   prefill: {
+    //     name: user.name,
+    //     email: user.email,
+    //   },
+    //   theme: {color: '#53a20e'}
+    // }
+
+    // RazorpayCheckout.open(options).then((data) => {
+    //   // handle success
+    //   paymentVerification({razorpay_payment_id:data.razorpay_payment_id,razorpay_order_id:data.razorpay_order_id,razorpay_signature:data.razorpay_signature})
+    //   bookingConfirm({
+    //     userId: user._id,
+    //     paymentId: data.razorpay_payment_id,
+    //     checkIn: checkInDate,
+    //     checkOut: checkOutDate,
+    //     numberOfClassicPods: values.numberOfClassicPods,
+    //     numberOfWomenPods: values.numberOfWomenPods,
+    //     numberOfPremiumPods: values.numberOfPremiumPods,
+    //   })
+      
+    //   // alert(`Success: ${data.razorpay_payment_id}`);
+      
+    //   navigation.navigate('Bookings')
+    // }).catch((error) => {
+    //   // handle failure
+    //   alert(`Error: ${error.code} | ${error.description}`);
+    // });
+
   }
 
   // Handle day press on the calendar
@@ -113,6 +161,13 @@ const Book = ({ navigation }) => {
     return diffDays;
   };
 
+  if(isLoading){
+    return(
+      <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+      <ActivityIndicator size={'large'} />
+    </View>
+    )
+  }
   return (
     <SafeAreaView>
       <ScrollView showsVerticalScrollIndicator={false}>

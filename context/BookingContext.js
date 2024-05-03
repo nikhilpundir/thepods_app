@@ -26,8 +26,10 @@ export const BookingContextProvider=({children})=>{
         })
         .catch(error=>{
             console.log(error);
+        }).finally(()=>{
+            setIsLoading(false);
         })
-        setIsLoading(false);
+        
     }
     const bookingConfirm=(body)=>{
         setIsLoading(true);
@@ -41,8 +43,10 @@ export const BookingContextProvider=({children})=>{
         })
         .catch(error=>{
             console.log(error);
+        }).finally(()=>{
+            setIsLoading(false);
         })
-        setIsLoading(false);
+        
     }
 
     return(

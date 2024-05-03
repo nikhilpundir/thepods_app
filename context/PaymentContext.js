@@ -11,21 +11,24 @@ export const PaymentContextProvider=({children})=>{
     const [isLoading, setIsLoading] = useState(false);
     
     const checkout= async (body)=>{
+        setIsLoading(true);
         try {
             const response = await axios.post(`${BOOKING_URL}/checkout`, body, {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
             });
-            console.log(response.data);
             return response.data;
 
         } catch (error) {
             console.log(error);
              // Rethrow the error to handle it outside
+        } finally{
+            setIsLoading(false);
         }
     }
     const getPaymentKey= async ()=>{
+        setIsLoading(true);
         try {
             const response = await axios.get(`${BASE_URL}/api/getkey`, {
                 headers: {
@@ -36,10 +39,13 @@ export const PaymentContextProvider=({children})=>{
         } catch (error) {
             console.log(error);
             
+        } finally{
+            setIsLoading(false);
         }
     }
 
     const paymentVerification=async (body)=>{
+        setIsLoading(true);
         try {
             const response = await axios.get(`${BOOKING_URL}/paymentverification`,body, {
                 headers: {
@@ -49,6 +55,8 @@ export const PaymentContextProvider=({children})=>{
             return response.data;
         } catch (error) {
             console.log(error);
+        } finally{
+            setIsLoading(false);
         }
     }
     
