@@ -13,7 +13,7 @@ const ProfileMain = ({navigation}) => {
     
   }
   const HandleBack=()=>{
-    navigation.navigate("HomeMain")
+    navigation.goBack()
   }
 
   return (

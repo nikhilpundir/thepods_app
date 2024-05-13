@@ -1,134 +1,46 @@
-// Import necessary components and libraries
-import React, { useContext, useEffect, useState } from 'react';
-import { View, StyleSheet, SafeAreaView, ScrollView, TextInput, Pressable, Text, Button, TouchableHighlight, ActivityIndicator } from 'react-native';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
+import { View, StyleSheet, SafeAreaView, ScrollView, TextInput, Pressable, Text, ActivityIndicator } from 'react-native';
 import { Calendar } from 'react-native-calendars';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import colors from '../assets/colors';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import RazorpayCheckout from 'react-native-razorpay';
-import { PaymentContext } from '../context/PaymentContext';
+import Toast from "react-native-toast-message";
+import colors from '../assets/colors';
 import { mainLogojpg } from '../assets/images';
 import { AuthContext } from '../context/AuthContext';
 import { BookingContext } from '../context/BookingContext';
-import Toast from "react-native-toast-message";
-// Define the Book component
+import { PaymentContext } from '../context/PaymentContext';
+
 const Book = ({ navigation }) => {
-  const {user}= useContext(AuthContext);
-  // Define state variables
+  const { user } = useContext(AuthContext);
+  const { getPaymentKey, checkout, paymentVerification, isLoading } = useContext(PaymentContext);
+  const { bookingConfirm } = useContext(BookingContext);
+
   const [calCheckInDate, setCalCheckInDate] = useState('');
   const [calCheckOutDate, setCalCheckOutDate] = useState('');
-  const [checkInDate, setCheckInDate] = useState('');
-  const [checkOutDate, setCheckOutDate] = useState('');
   const [totalAmount, setTotalAmount] = useState(0);
-
-  const { getPaymentKey, checkout ,paymentVerification,isLoading} = useContext(PaymentContext);
-  const {bookingConfirm} = useContext(BookingContext);
-
+  const [numberOfClassicPods, setNumberOfClassicPods] = useState(0);
+  const [numberOfPremiumPods, setNumberOfPremiumPods] = useState(0);
+  const [numberOfWomenPods, setNumberOfWomenPods] = useState(0);
+  const [submitDisabled, setSubmitDisabled] = useState(true);
 
   useEffect(() => {
-    setCheckInDate(new Date(calCheckInDate));
-    setCheckOutDate(new Date(calCheckOutDate));
-  }, [calCheckInDate, calCheckOutDate])
+    setCalCheckInDate('');
+    setCalCheckOutDate('');
+    setTotalAmount(0);
+    setSubmitDisabled(true);
+  }, []);
 
-  const formSubmitHandler = async (values) => {
-    const classicPodsPrice = parseInt(values.numberOfClassicPods) * 200;
-    const premiumPodsPrice = parseInt(values.numberOfPremiumPods) * 200;
-    const womenPodsPrice = parseInt(values.numberOfWomenPods) * 400;
-    const calctotalAmount = (classicPodsPrice + premiumPodsPrice + womenPodsPrice) * getNumberOfDays();
-    setTotalAmount(isNaN(calctotalAmount) ? 0 : calctotalAmount);
-    // console.log({ ...values, checkIn: checkInDate, checkOut: checkOutDate, amount: totalAmount });
-    
-    try {
-      const keyResponse= await getPaymentKey();
-      const key= keyResponse.key;
-      const orderResponse = await checkout({ ...values, checkIn: checkInDate, checkOut: checkOutDate, amount: totalAmount });
-      const order = orderResponse.order;
-      var options = {
-        description: 'Booking',
-        image: mainLogojpg,
-        currency: 'INR',
-        key,
-        amount: order.amount,
-        name: 'ThePods',
-        order_id: order.id,//Replace this with an order_id created using Orders API.
-        prefill: {
-          name: user.name,
-          email: user.email,
-        },
-        theme: {color: '#53a20e'}
-      }
-  
-      RazorpayCheckout.open(options).then((data) => {
-        // handle success
-        paymentVerification({razorpay_payment_id:data.razorpay_payment_id,razorpay_order_id:data.razorpay_order_id,razorpay_signature:data.razorpay_signature})
-        bookingConfirm({
-          userId: user._id,
-          paymentId: data.razorpay_payment_id,
-          checkIn: checkInDate,
-          checkOut: checkOutDate,
-          numberOfClassicPods: values.numberOfClassicPods,
-          numberOfWomenPods: values.numberOfWomenPods,
-          numberOfPremiumPods: values.numberOfPremiumPods,
-        })
-        
-        // alert(`Success: ${data.razorpay_payment_id}`);
-        
-        navigation.navigate('Bookings')
-      }).catch((error) => {
-        // handle failure
-        alert(`Error: ${error.code} | ${error.description}`);
-      });
-  
-    } catch (error) {
-      Toast.show({
-        type: 'error',
-        text1: error,
-        text2: 'Please try again!'
-    });
+  useEffect(() => {
+    if ((calCheckInDate && calCheckOutDate) && (numberOfClassicPods !== 0 || numberOfPremiumPods !== 0 || numberOfWomenPods !== 0)) {
+      calculateAmount();
+      setSubmitDisabled(false);
+    } else {
+      setSubmitDisabled(true);
+      setTotalAmount(0);
     }
-   
-    
-    // var options = {
-    //   description: 'Booking',
-    //   image: mainLogojpg,
-    //   currency: 'INR',
-    //   key,
-    //   amount: order.amount,
-    //   name: 'ThePods',
-    //   order_id: order.id,//Replace this with an order_id created using Orders API.
-    //   prefill: {
-    //     name: user.name,
-    //     email: user.email,
-    //   },
-    //   theme: {color: '#53a20e'}
-    // }
+  }, [calCheckInDate, calCheckOutDate, numberOfClassicPods, numberOfPremiumPods, numberOfWomenPods]);
 
-    // RazorpayCheckout.open(options).then((data) => {
-    //   // handle success
-    //   paymentVerification({razorpay_payment_id:data.razorpay_payment_id,razorpay_order_id:data.razorpay_order_id,razorpay_signature:data.razorpay_signature})
-    //   bookingConfirm({
-    //     userId: user._id,
-    //     paymentId: data.razorpay_payment_id,
-    //     checkIn: checkInDate,
-    //     checkOut: checkOutDate,
-    //     numberOfClassicPods: values.numberOfClassicPods,
-    //     numberOfWomenPods: values.numberOfWomenPods,
-    //     numberOfPremiumPods: values.numberOfPremiumPods,
-    //   })
-      
-    //   // alert(`Success: ${data.razorpay_payment_id}`);
-      
-    //   navigation.navigate('Bookings')
-    // }).catch((error) => {
-    //   // handle failure
-    //   alert(`Error: ${error.code} | ${error.description}`);
-    // });
-
-  }
-
-  // Handle day press on the calendar
-  const handleDayPress = (day) => {
+  const handleDayPress = useCallback((day) => {
     if (!calCheckInDate || (calCheckInDate && calCheckOutDate)) {
       setCalCheckInDate(day.dateString);
       setCalCheckOutDate('');
@@ -140,34 +52,89 @@ const Book = ({ navigation }) => {
         setCalCheckOutDate(day.dateString);
       }
     }
+  }, [calCheckInDate, calCheckOutDate]);
+
+  const formSubmitHandler = useCallback(async () => {
+    try {
+      const keyResponse = await getPaymentKey();
+      const key = keyResponse.key;
+      const orderResponse = await checkout({ checkIn: new Date(calCheckInDate), checkOut: new Date(calCheckOutDate), amount: totalAmount });
+      const order = orderResponse.order;
+      var options = {
+        description: 'Booking',
+        image: mainLogojpg,
+        currency: 'INR',
+        key,
+        amount: order.amount,
+        name: 'ThePods',
+        order_id: order.id,
+        prefill: {
+          name: user.name,
+          email: user.email,
+        },
+        theme: { color: '#53a20e' }
+      };
+
+      RazorpayCheckout.open(options).then((data) => {
+        paymentVerification({ razorpay_payment_id: data.razorpay_payment_id, razorpay_order_id: data.razorpay_order_id, razorpay_signature: data.razorpay_signature });
+        bookingConfirm({
+          userId: user._id,
+          paymentId: data.razorpay_payment_id,
+          checkIn: new Date(calCheckInDate),
+          checkOut: new Date(calCheckOutDate),
+          numberOfClassicPods,
+          numberOfWomenPods,
+          numberOfPremiumPods,
+        });
+        navigation.navigate('Bookings');
+      }).catch((error) => {
+        alert(`Error: ${error.code} | ${error.description}`);
+      });
+    } catch (error) {
+      console.log(error)
+      Toast.show({
+        type: 'error',
+        text1: error,
+        text2: error
+      });
+    }
+  }, [getPaymentKey, checkout, paymentVerification, bookingConfirm, navigation, user, calCheckInDate, calCheckOutDate, totalAmount, numberOfClassicPods, numberOfPremiumPods, numberOfWomenPods]);
+
+  const calculateAmount = () => {
+    const classicPodsPrice = numberOfClassicPods * 200;
+    const premiumPodsPrice = numberOfPremiumPods * 400;
+    const womenPodsPrice = numberOfWomenPods * 200;
+    const calculatedAmount = (classicPodsPrice + premiumPodsPrice + womenPodsPrice) * getNumberOfDays();
+    setTotalAmount(isNaN(calculatedAmount) ? 0 : calculatedAmount);
   };
 
-  const getMiddleDates = (startDate, endDate) => {
+  const getMiddleDates = useCallback((startDate, endDate) => {
     const middleDates = {};
-
     let currentDate = new Date(startDate);
     while (currentDate < new Date(endDate)) {
       currentDate.setDate(currentDate.getDate() + 1);
       const dateString = currentDate.toISOString().split('T')[0];
-      if (dateString !== startDate && dateString !== endDate) { // Exclude start and end dates
+      if (dateString !== startDate && dateString !== endDate) {
         middleDates[dateString] = { color: '#FFE2E3', textColor: 'red' };
       }
     }
     return middleDates;
-  };
-  const getNumberOfDays = () => {
-    const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-    const diffDays = Math.round(Math.abs((checkInDate - checkOutDate) / oneDay) + 1);
-    return diffDays;
-  };
+  }, []);
 
-  if(isLoading){
-    return(
-      <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-      <ActivityIndicator size={'large'} />
-    </View>
-    )
+  const getNumberOfDays = useCallback(() => {
+    const oneDay = 24 * 60 * 60 * 1000;
+    const diffDays = Math.round(Math.abs((new Date(calCheckInDate) - new Date(calCheckOutDate)) / oneDay) + 1);
+    return diffDays;
+  }, [calCheckInDate, calCheckOutDate]);
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size={'large'} />
+      </View>
+    );
   }
+
   return (
     <SafeAreaView>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -191,132 +158,73 @@ const Book = ({ navigation }) => {
             />
             <Text style={styles.dates}>CheckIn Date : {calCheckInDate}</Text>
             <Text style={styles.dates}>CheckOut Date : {calCheckOutDate}</Text>
-
           </View>
 
-          <Formik
-            initialValues={{ numberOfClassicPods: '0', numberOfPremiumPods: '0', numberOfWomenPods: '0' }}
-            validationSchema={Yup.object({
-              numberOfClassicPods: Yup.number().min(0, 'Cannot be less than 0').max(10, 'Cannot be more than 10').required('Required'),
-              numberOfPremiumPods: Yup.number().min(0, 'Cannot be less than 0').max(10, 'Cannot be more than 10').required('Required'),
-              numberOfWomenPods: Yup.number().min(0, 'Cannot be less than 0').max(10, 'Cannot be more than 10').required('Required'),
-            })}
-            validateOnChange={false} // Disable auto-validation on change to improve performance
-            validateOnBlur={true} // Validate on blur of input fields
-            validateOnMount={true}
-            onSubmit={formSubmitHandler}
-
-          >
-            {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
-              <View style={styles.formContainer}>
-
-                <View style={styles.inputLabel}>
-                  <Text style={styles.inputLabelText}>
-                    <Icon name="circle-chevron-right" size={20} color="black" /> Classic Pods
-                  </Text>
-                </View>
-                <View style={styles.inputContainer}>
-                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('numberOfClassicPods')(Math.max(0, parseInt(values.numberOfClassicPods ? values.numberOfClassicPods : '0') - 1).toString())}>
-                    <Text style={styles.buttonText}>-</Text>
-                  </Pressable>
-
-                  <TextInput
-                    onChangeText={handleChange('numberOfClassicPods')}
-                    onBlur={handleBlur('numberOfClassicPods')}
-                    value={values.numberOfClassicPods}
-                    style={styles.inputBox}
-                    // placeholder='0'
-                    maxLength={2}
-                    keyboardType="numeric"
-                    max={10}
-                  />
-                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('numberOfClassicPods')((Math.min(10, parseInt(values.numberOfClassicPods ? values.numberOfClassicPods : '0') + 1)).toString())}>
-                    <Text style={styles.buttonText}>+</Text>
-                  </Pressable>
-
-
-                </View>
-                {errors.numberOfClassicPods && touched.numberOfClassicPods && <Text style={styles.errorMsg}>{errors.numberOfClassicPods}</Text>}
-
-                <View style={styles.inputLabel}>
-                  <Text style={styles.inputLabelText}>
-                    <Icon name="circle-chevron-right" size={20} color="black" /> Premium Pods
-                  </Text>
-                </View>
-                <View style={styles.inputContainer}>
-                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('numberOfPremiumPods')(Math.max(0, parseInt(values.numberOfPremiumPods ? values.numberOfPremiumPods : '0') - 1).toString())}>
-                    <Text style={styles.buttonText}>-</Text>
-                  </Pressable>
-                  <TextInput
-                    onChangeText={handleChange('numberOfPremiumPods')}
-                    onBlur={handleBlur('numberOfPremiumPods')}
-                    value={values.numberOfPremiumPods}
-                    style={styles.inputBox}
-                    // placeholder='0'
-                    maxLength={2}
-                    keyboardType="numeric"
-                    max={10}
-                  />
-                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('numberOfPremiumPods')((Math.min(10, parseInt(values.numberOfPremiumPods ? values.numberOfPremiumPods : '0') + 1)).toString())}>
-                    <Text style={styles.buttonText}>+</Text>
-                  </Pressable>
-
-                </View>
-                {errors.numberOfPremiumPods && touched.numberOfPremiumPods && <Text style={styles.errorMsg}>{errors.numberOfPremiumPods}</Text>}
-
-                <View style={styles.inputLabel}>
-                  <Text style={styles.inputLabelText}>
-                    <Icon name="circle-chevron-right" size={20} color="black" /> Women Pods
-                  </Text>
-                </View>
-                <View style={styles.inputContainer}>
-                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('numberOfWomenPods')(Math.max(0, parseInt(values.numberOfWomenPods ? values.numberOfWomenPods : '0') - 1).toString())}>
-                    <Text style={styles.buttonText}>-</Text>
-                  </Pressable>
-                  <TextInput
-                    onChangeText={handleChange('numberOfWomenPods')}
-                    onBlur={handleBlur('numberOfWomenPods')}
-                    value={values.numberOfWomenPods}
-                    style={styles.inputBox}
-                    // placeholder='0'
-                    maxLength={2}
-                    keyboardType="numeric"
-                    max={10}
-                  />
-                  <Pressable style={styles.buttonContainer} onPress={() => handleChange('numberOfWomenPods')((Math.min(10, parseInt(values.numberOfWomenPods ? values.numberOfWomenPods : '0') + 1)).toString())}>
-                    <Text style={styles.buttonText}>+</Text>
-                  </Pressable>
-
-                </View>
-                {errors.numberOfWomenPods && touched.numberOfWomenPods && <Text style={styles.errorMsg}>{errors.numberOfWomenPods}</Text>}
-
-                
-
-                <Pressable onPress={handleSubmit} style={styles.submitButton} >
-                  <Text style={styles.submitButtonText}>Pay</Text>
-                </Pressable>
-
-              </View>
-            )}
-          </Formik>
-
+          <View style={styles.formContainer}>
+            <InputSection
+              label="Classic Pods"
+              value={numberOfClassicPods.toString()}
+              onIncrement={() => setNumberOfClassicPods((prev) => Math.min(10, prev + 1))}
+              onDecrement={() => setNumberOfClassicPods((prev) => Math.max(0, prev - 1))}
+            />
+            <InputSection
+              label="Premium Pods"
+              value={numberOfPremiumPods.toString()}
+              onIncrement={() => setNumberOfPremiumPods((prev) => Math.min(10, prev + 1))}
+              onDecrement={() => setNumberOfPremiumPods((prev) => Math.max(0, prev - 1))}
+            />
+            <InputSection
+              label="Women Pods"
+              value={numberOfWomenPods.toString()}
+              onIncrement={() => setNumberOfWomenPods((prev) => Math.min(10, prev + 1))}
+              onDecrement={() => setNumberOfWomenPods((prev) => Math.max(0, prev - 1))}
+            />
+            <Pressable onPress={formSubmitHandler} style={[styles.submitButton, submitDisabled && { opacity: 0.5, backgroundColor: '#000' }]} disabled={submitDisabled}>
+              <Text style={styles.submitButtonText}>Pay {totalAmount}</Text>
+            </Pressable>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-// Define styles
+const InputSection = ({ label, value, onIncrement, onDecrement }) => (
+  <View>
+    <View style={styles.inputLabel}>
+      <Text style={styles.inputLabelText}>
+        <Icon name="circle-chevron-right" size={20} color="black" /> {label}
+      </Text>
+    </View>
+    <View style={styles.inputContainer}>
+      <Pressable style={styles.buttonContainer} onPress={onDecrement}>
+        <Text style={styles.buttonText}>-</Text>
+      </Pressable>
+      <TextInput
+        value={value}
+        style={styles.inputBox}
+        keyboardType="numeric"
+        editable={false}
+      />
+      <Pressable style={styles.buttonContainer} onPress={onIncrement}>
+        <Text style={styles.buttonText}>+</Text>
+      </Pressable>
+    </View>
+  </View>
+);
+
 const styles = StyleSheet.create({
   container: {
     padding: 20,
   },
   calendarContainer: {
     marginBottom: 20,
-  }, formContainer: {
+  },
+  formContainer: {
     alignSelf: "flex-start",
     width: "100%",
-  }, inputContainer: {
+  },
+  inputContainer: {
     display: "flex",
     flexDirection: "row",
     justifyContent: 'space-between',
@@ -328,6 +236,7 @@ const styles = StyleSheet.create({
     width: "50%",
     textAlign: "center",
     fontSize: 20,
+    color:"black"
   },
   buttonContainer: {
 
@@ -336,11 +245,6 @@ const styles = StyleSheet.create({
     fontSize: 30,
     paddingHorizontal: 30,
     color: colors.black,
-  },
-  errorMsg: {
-    color: "red",
-    marginTop: -5,
-    marginBottom: 10
   },
   submitButton: {
     backgroundColor: colors.black,
@@ -356,7 +260,8 @@ const styles = StyleSheet.create({
   inputLabel: {
     marginVertical: 10,
 
-  }, inputLabelText: {
+  },
+  inputLabelText: {
     fontSize: 17
   },
   dates: {
@@ -367,4 +272,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default Book; // Export the Book component
+export default Book;

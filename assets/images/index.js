@@ -21,6 +21,10 @@ import profileBg from './profileBg.png'
 import userImg from './user.jpeg'
 import bookingsBg from './bookingsBg.png'
 import mainLogojpg from './mainLogo.jpg'
+import womensOnly from './womensOnly.jpg'
+import luxury from './luxury.png'
+import affordable from './affordable.jpg'
+import booknow from './booknow.gif'
 export{
     mainLogo,
     heroImage,
@@ -42,5 +46,9 @@ export{
     profileBg,
     userImg,
     bookingsBg,
-    mainLogojpg
+    mainLogojpg,
+    womensOnly,
+    luxury,
+    affordable,
+    booknow
 }
