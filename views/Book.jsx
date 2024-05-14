@@ -15,8 +15,8 @@ const Book = ({ navigation }) => {
   const { getPaymentKey, checkout, paymentVerification, isLoading } = useContext(PaymentContext);
   const { bookingConfirm } = useContext(BookingContext);
 
-  const [calCheckInDate, setCalCheckInDate] = useState('');
-  const [calCheckOutDate, setCalCheckOutDate] = useState('');
+  const [calCheckInDate, setCalCheckInDate] = useState('select');
+  const [calCheckOutDate, setCalCheckOutDate] = useState('select');
   const [totalAmount, setTotalAmount] = useState(0);
   const [numberOfClassicPods, setNumberOfClassicPods] = useState(0);
   const [numberOfPremiumPods, setNumberOfPremiumPods] = useState(0);
@@ -24,14 +24,12 @@ const Book = ({ navigation }) => {
   const [submitDisabled, setSubmitDisabled] = useState(true);
 
   useEffect(() => {
-    setCalCheckInDate('');
-    setCalCheckOutDate('');
     setTotalAmount(0);
     setSubmitDisabled(true);
   }, []);
 
   useEffect(() => {
-    if ((calCheckInDate && calCheckOutDate) && (numberOfClassicPods !== 0 || numberOfPremiumPods !== 0 || numberOfWomenPods !== 0)) {
+    if ((calCheckInDate!='' && calCheckOutDate!='') && (numberOfClassicPods !== 0 || numberOfPremiumPods !== 0 || numberOfWomenPods !== 0)) {
       calculateAmount();
       setSubmitDisabled(false);
     } else {
@@ -136,12 +134,12 @@ const Book = ({ navigation }) => {
   }
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.container}>
+        
           <View style={styles.inputLabel}>
             <Text style={styles.inputLabelText}>
-              <Icon name="calendar-plus" size={20} color="black" /> Select Check in and Check out Date
+              <Icon name="caret-right" size={20} color="black" /> Select Check in Date and then Check out Date
             </Text>
           </View>
           <View style={styles.calendarContainer}>
@@ -156,8 +154,8 @@ const Book = ({ navigation }) => {
                 ...getMiddleDates(calCheckInDate, calCheckOutDate)
               }}
             />
-            <Text style={styles.dates}>CheckIn Date : {calCheckInDate}</Text>
-            <Text style={styles.dates}>CheckOut Date : {calCheckOutDate}</Text>
+            <Text style={styles.dates}><Icon name="calendar-plus" size={20} color="black" /> CheckIn Date : {calCheckInDate}</Text>
+            <Text style={styles.dates}><Icon name="calendar-plus" size={20} color="black" /> CheckOut Date : {calCheckOutDate}</Text>
           </View>
 
           <View style={styles.formContainer}>
@@ -180,10 +178,10 @@ const Book = ({ navigation }) => {
               onDecrement={() => setNumberOfWomenPods((prev) => Math.max(0, prev - 1))}
             />
             <Pressable onPress={formSubmitHandler} style={[styles.submitButton, submitDisabled && { opacity: 0.5, backgroundColor: '#000' }]} disabled={submitDisabled}>
-              <Text style={styles.submitButtonText}>Pay {totalAmount}</Text>
+              <Text style={styles.submitButtonText}>Pay {totalAmount} ₹</Text>
             </Pressable>
           </View>
-        </View>
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -193,12 +191,12 @@ const InputSection = ({ label, value, onIncrement, onDecrement }) => (
   <View>
     <View style={styles.inputLabel}>
       <Text style={styles.inputLabelText}>
-        <Icon name="circle-chevron-right" size={20} color="black" /> {label}
+        <Icon name="caret-right" size={20} color="black" /> {label}
       </Text>
     </View>
     <View style={styles.inputContainer}>
-      <Pressable style={styles.buttonContainer} onPress={onDecrement}>
-        <Text style={styles.buttonText}>-</Text>
+      <Pressable style={styles.buttonMinusContainer} onPress={onDecrement}>
+        <Icon name="minus" size={20} color="red"  style={styles.buttonMinus}/>
       </Pressable>
       <TextInput
         value={value}
@@ -206,19 +204,22 @@ const InputSection = ({ label, value, onIncrement, onDecrement }) => (
         keyboardType="numeric"
         editable={false}
       />
-      <Pressable style={styles.buttonContainer} onPress={onIncrement}>
-        <Text style={styles.buttonText}>+</Text>
+      <Pressable style={styles.buttonPlusContainer} onPress={onIncrement}>
+      <Icon name="plus" size={20} color="green" style={styles.buttonPlus}/>
       </Pressable>
     </View>
   </View>
 );
 
 const styles = StyleSheet.create({
-  container: {
+  container:{
+    backgroundColor:"white",
+    flex:1,
     padding: 20,
   },
+  
   calendarContainer: {
-    marginBottom: 20,
+    marginBottom: 5,
   },
   formContainer: {
     alignSelf: "flex-start",
@@ -238,18 +239,29 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color:"black"
   },
-  buttonContainer: {
-
+  buttonPlusContainer: {
+    padding:15,
+    margin:3,
+    backgroundColor:"#D0E4C8",
+    elevation: 1,
+    shadowColor: '#171717',
+    borderRadius:10
   },
-  buttonText: {
-    fontSize: 30,
-    paddingHorizontal: 30,
-    color: colors.black,
+ 
+  buttonMinusContainer: {
+    padding:15,
+    margin:3,
+    backgroundColor:"#F0BCBD",
+    elevation: 1,
+    shadowColor: '#171717',
+    borderRadius:10
   },
+  
   submitButton: {
-    backgroundColor: colors.black,
+    backgroundColor: "#01015D",
     color: colors.white,
     padding: 15,
+    marginVertical:20,
     borderRadius: 5
   },
   submitButtonText: {
@@ -262,11 +274,12 @@ const styles = StyleSheet.create({
 
   },
   inputLabelText: {
-    fontSize: 17
+    fontSize: 20,
+    color:"black"
   },
   dates: {
     paddingVertical: 5,
-    fontSize: 18,
+    fontSize: 20,
     color: "black"
   }
 

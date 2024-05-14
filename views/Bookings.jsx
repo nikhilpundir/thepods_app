@@ -1,24 +1,28 @@
-import { ActivityIndicator, FlatList, Image, RefreshControl, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Image, Pressable, RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import React, { useContext, useEffect } from 'react';
 import { bookingsBg } from '../assets/images';
-import { BookingsListItem } from '../components';
+import { BookingDetails, BookingsListItem } from '../components';
 import { BookingContext } from '../context/BookingContext';
 import { AuthContext } from '../context/AuthContext';
-
-const Bookings = () => {
+import Icon from 'react-native-vector-icons/FontAwesome6';
+const Bookings = ({navigation}) => {
   const { getBooking, isLoading, bookings } = useContext(BookingContext);
   const { user } = useContext(AuthContext);
 
   const onRefresh = () => {
     getBooking({ userId: user?._id });
   };
-
+ 
+const handleBookingDetail=(booking)=>{
+  navigation.navigate("BookingDetails",booking)
+}
   useEffect(() => {
     getBooking({ userId: user?._id });
   }, []);
   
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={styles.container}>
+      
       <View style={styles.heroContainer}>
         <Text style={styles.heroHeading}>Bookings</Text>
         <Image source={bookingsBg} style={styles.heroBg} />
@@ -28,9 +32,10 @@ const Bookings = () => {
           data={bookings}
           renderItem={({ item }) => (
             <View>
+              <Pressable onPress={() => handleBookingDetail(item)}>
               <BookingsListItem
                 key={item._id}
-                bookingId={item._id}
+                // bookingId={item._id}
                 numberOfClassicPods={item.numberOfClassicPods}
                 numberOfWomenPods={item.numberOfWomenPods}
                 numberOfPremiumPods={item.numberOfPremiumPods}
@@ -38,6 +43,7 @@ const Bookings = () => {
                 checkIn={item.checkIn}
                 checkOut={item.checkOut}
               />
+              </Pressable>
             </View>
           )}
           keyExtractor={(item, index) => index.toString()}
@@ -51,19 +57,31 @@ const Bookings = () => {
 export default Bookings;
 
 const styles = StyleSheet.create({
+  backIcon: {
+    padding: 15,
+    width: 60,
+},
+  container:{
+     backgroundColor: '#ffffff',
+     flex:1
+  },
   heroContainer: {
+    backgroundColor: '#DFE2FA',
     padding: 10,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-around',
+    alignItems:"center"
   },
   heroBg: {
     height: 155,
     width: 240,
   },
   heroHeading: {
-    fontSize: 30,
-    marginTop: 50,
+    fontSize: 50,
+    color:"black",
+    // marginTop: 50,
+    
   },
   bookingContainer: {
     flex: 1, // Allow the container to occupy available space

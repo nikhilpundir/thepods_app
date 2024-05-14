@@ -235,7 +235,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'lightblue',
     margin: 5,
     borderRadius: 30,
-    // borderWidth: 1,
     elevation: 3,
     shadowColor: '#171717',
     overflow: "hidden"

@@ -6,6 +6,7 @@ import OtpVerfication from './OtpVerfication'
 import Book from './Book'
 import ProfileMain from './ProfileMain'
 import Bookings from './Bookings'
+import PrivacyPolicy from './PrivacyPolicy'
 export {
     HomeScreen,
     OnBoard,
@@ -14,5 +15,6 @@ export {
     OtpVerfication,
     Book,
     ProfileMain,
-    Bookings
+    Bookings,
+    PrivacyPolicy
 }

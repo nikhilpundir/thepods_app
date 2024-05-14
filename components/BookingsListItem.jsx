@@ -1,30 +1,27 @@
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-
+import Icon from 'react-native-vector-icons/Ionicons';
 const BookingsListItem = (props) => {
-  
+
   const formatDate = (date) => new Date(date).toLocaleDateString();
   return (
     <SafeAreaView>
-    <ScrollView showsVerticalScrollIndicator={false}>
-    <View style={styles.container}>
-    <Text style={styles.containerText}>Booking Id : {props.bookingId}</Text>
-      <Text style={styles.containerText}>Booking Date : {formatDate(props.bookingDate)}</Text>
-      <Text style={styles.containerText}>Check In : {formatDate(props.checkIn)}</Text>
-      <Text style={styles.containerText}>Check Out : {formatDate(props.checkOut)}</Text>
-      
-      <Text style={styles.containerText}>Classic Pods : {props.numberOfClassicPods}</Text>
-      <Text style={styles.containerText}>Womens Pods : {props.numberOfWomenPods}</Text>
-      <Text style={styles.containerText}>Premium Pods : {props.numberOfPremiumPods}</Text>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        
+        <View style={styles.container}>
+          {/* <Text style={styles.containerText}><Icon name="checkmark-circle-sharp" size={20} color="black" /> Booking Id : {props.bookingId}</Text> */}
+          <Text style={styles.containerText}><Icon name="calendar-clear" size={20} color="black" /> Booking Date : {formatDate(props.bookingDate)}</Text>
+          <Text style={styles.containerText}><Icon name="calendar" size={20} color="black" /> Check In : {formatDate(props.checkIn)}</Text>
+          <Text style={styles.containerText}><Icon name="calendar" size={20} color="black" /> Check Out : {formatDate(props.checkOut)}</Text>
 
-      <Pressable style={styles.cancelButton}>
-        <Text style={styles.cancelButtonText}>
-          cancel
-        </Text>
-      </Pressable>
+          <Text style={styles.containerText}><Icon name="caret-forward-outline" size={20} color="black" /> Classic Pods : {props.numberOfClassicPods}</Text>
+          <Text style={styles.containerText}><Icon name="caret-forward-outline" size={20} color="black" /> Womens Pods : {props.numberOfWomenPods}</Text>
+          <Text style={styles.containerText}><Icon name="caret-forward-outline" size={20} color="black" /> Premium Pods : {props.numberOfPremiumPods}</Text>
 
-    </View>
-    </ScrollView>
+          
+
+        </View>
+      </ScrollView>
     </SafeAreaView>
   )
 }
@@ -32,33 +29,19 @@ const BookingsListItem = (props) => {
 export default BookingsListItem
 
 const styles = StyleSheet.create({
-  container:{
-    padding:10,
+  container: {
+    padding: 10,
     // borderWidth:1,
-    marginVertical:10,
-    display:"flex",
-    backgroundColor:"white",
+    marginVertical: 10,
+    display: "flex",
+    backgroundColor: "#FEFDE7",
     shadowColor: '#171717',
-    shadowOffset: {width: -2, height: 3},
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation:0.8,
-    borderRadius:5
+    elevation: 1,
+    borderRadius: 20
   },
-  containerText:{
-    color:"black",
-    fontSize:20
+  containerText: {
+    color: "black",
+    fontSize: 20
   },
-  cancelButton:{
-    backgroundColor:"red",
-    padding:10,
-    width:150,
-    alignSelf:"flex-end",
-    borderRadius:5
-    
-  },
-  cancelButtonText:{
-    textAlign:"center",
-    color:"white"
-  }
+  
 })

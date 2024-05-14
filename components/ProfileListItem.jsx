@@ -8,7 +8,7 @@ const ProfileListItem = (props,navigation) => {
     <Pressable onPress={props.itemHandler}>
     <View style={styles.container}>
       <Icon name={props.iconName} size={23} color="black" />
-      <Text>{props.itemName}</Text>
+      <Text style={styles.buttonText}>{props.itemName}</Text>
     </View>
     </Pressable>
   )
@@ -20,9 +20,18 @@ const styles = StyleSheet.create({
   container:{
     display:"flex",
     flexDirection:"row",
-    padding:10,
+    alignItems:"center",
+    padding:20,
+    margin:2,
     gap:10,
-    borderWidth:0.2,
-    borderBottomWidth:0
+    elevation: 1,
+    shadowColor: '#171717',
+    
+    
+  },
+  buttonText:{
+    color:"black",
+    fontSize:20,
+    
   }
 })

@@ -12,6 +12,9 @@ const PodPage = ({ route, navigation }) => {
     const HandleBook = () => {
         navigation.navigate("Book")
       }
+      const HandleCall=()=>{
+        Linking.openURL('tel:+1234567890');
+      }
     return (
         <SafeAreaView style={styles.main}>
         <View style={styles.container}>
@@ -30,7 +33,7 @@ const PodPage = ({ route, navigation }) => {
                     Price : {amount} ₹ per night.
                 </Text>
                 <View style={styles.bottomSection}>
-                    <Pressable style={styles.contact}>
+                    <Pressable style={styles.contact} onPress={HandleCall}>
                         <Text style={styles.contactText}><Icon name="call-outline" size={20} color="black" /> Contact</Text>
                     </Pressable>
                     <Pressable style={styles.Book} onPress={HandleBook}>
