@@ -51,8 +51,9 @@ export const AuthProvider = ({ children }) => {
                     text1: errorMessage,
                     text2: 'Please try again!'
                 });
-            })
-        setIsLoading(false)
+            }).finally(() => {
+                setIsLoading(false);
+            });
     }
     const logout = () => {
         setIsLoading(true)

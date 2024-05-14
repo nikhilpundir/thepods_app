@@ -7,8 +7,6 @@ import colors from '../assets/colors';
 import { AuthContext } from '../context/AuthContext';
 const Login = ({ navigation }) => {
   const {login,isLoading}=useContext(AuthContext)
-  
-  
   const formSubmit=(values)=>{
     login(values);
     

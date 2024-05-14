@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
     gap:10,
     elevation: 1,
     shadowColor: '#171717',
+    borderWidth:0.1
     
     
   },
