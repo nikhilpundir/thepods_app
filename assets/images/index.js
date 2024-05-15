@@ -25,6 +25,7 @@ import womensOnly from './womensOnly.jpg'
 import luxury from './luxury.png'
 import affordable from './affordable.jpg'
 import booknow from './booknow.gif'
+import loadingGif from './loadingGif.gif'
 export{
     mainLogo,
     heroImage,
@@ -50,5 +51,6 @@ export{
     womensOnly,
     luxury,
     affordable,
-    booknow
+    booknow,
+    loadingGif
 }

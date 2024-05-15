@@ -1,22 +1,39 @@
-import React, {useContext} from 'react'
-import { View,ActivityIndicator } from 'react-native';
+import React, {useContext, useEffect, useState} from 'react'
+import { View,ActivityIndicator, StyleSheet, Image, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AuthStack from './AuthStack'
 import AppStack from './AppStack';
 import { AuthContext } from '../context/AuthContext';
 import Toast from 'react-native-toast-message';
+import { loadingGif } from '../assets/images';
 
 
 const Stack = createNativeStackNavigator();
 const AppNav = () => {
   const {user,isLoading}=useContext(AuthContext);
-  if(isLoading){
-    return(
-      <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-      <ActivityIndicator size={'large'} />
+  const [isContentLoading, setIsContentLoading] = useState(true);
+  useEffect(() => {
+    // Simulating data fetching or initialization
+    setTimeout(() => {
+      setIsContentLoading(false); // Set loading to false after some time (simulating data loading)
+    }, 3000); // Simulate 3 seconds of loading
+  }, []);
+
+  const LoadingScreen = () => (
+    <View style={styles.container}>
+      <Image source={loadingGif} style={styles.loadingImage} />
     </View>
-    )
+  );
+  
+
+  if (isContentLoading) {
+    // Render a loading indicator while loading
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <LoadingScreen />
+      </View>
+    );
   }
   return (
     <>
@@ -31,3 +48,22 @@ const AppNav = () => {
 }
 
 export default AppNav
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    width:"100%"
+  },
+  loadingImage: {
+    width: 100,
+    height: 100,
+    marginBottom: 20,
+  },
+  loadingText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+});

@@ -26,6 +26,7 @@ const Book = ({ navigation }) => {
   useEffect(() => {
     setTotalAmount(0);
     setSubmitDisabled(true);
+
   }, []);
 
   useEffect(() => {
@@ -46,7 +47,7 @@ const Book = ({ navigation }) => {
       if (new Date(day.dateString) < new Date(calCheckInDate)) {
         setCalCheckOutDate(calCheckInDate);
         setCalCheckInDate(day.dateString);
-      } else {
+      } else if (day.dateString !== calCheckInDate) { // Add condition to avoid setting the same date
         setCalCheckOutDate(day.dateString);
       }
     }
@@ -102,7 +103,7 @@ const Book = ({ navigation }) => {
     const classicPodsPrice = numberOfClassicPods * 200;
     const premiumPodsPrice = numberOfPremiumPods * 400;
     const womenPodsPrice = numberOfWomenPods * 200;
-    const calculatedAmount = (classicPodsPrice + premiumPodsPrice + womenPodsPrice) * getNumberOfDays();
+    const calculatedAmount = ((classicPodsPrice + premiumPodsPrice + womenPodsPrice) * getNumberOfDays())/2;
     setTotalAmount(isNaN(calculatedAmount) ? 0 : calculatedAmount);
   };
 

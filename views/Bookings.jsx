@@ -1,5 +1,5 @@
 import { ActivityIndicator, FlatList, Image, Pressable, RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { bookingsBg } from '../assets/images';
 import { BookingDetails, BookingsListItem } from '../components';
 import { BookingContext } from '../context/BookingContext';
@@ -8,6 +8,16 @@ import Icon from 'react-native-vector-icons/FontAwesome6';
 const Bookings = ({navigation}) => {
   const { getBooking, isLoading, bookings } = useContext(BookingContext);
   const { user } = useContext(AuthContext);
+  const [filteredBookings, setFilteredBookings] = useState([]);
+
+  useEffect(() => {
+    // Filter bookings where isCancelled is false whenever the bookings array changes
+    const filtered = bookings?.filter(booking => {
+      // Filter out cancelled bookings and old bookings
+      return !booking.isCancelled && new Date(booking.checkOut) > new Date();
+    });
+    setFilteredBookings(filtered);
+  }, [bookings]);
 
   const onRefresh = () => {
     getBooking({ userId: user?._id });
@@ -29,7 +39,7 @@ const handleBookingDetail=(booking)=>{
       </View>
       <View style={styles.bookingContainer}>
         <FlatList
-          data={bookings}
+          data={filteredBookings?.length > 0 ? filteredBookings : bookings}
           renderItem={({ item }) => (
             <View>
               <Pressable onPress={() => handleBookingDetail(item)}>
