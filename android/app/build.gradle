@@ -109,7 +109,7 @@ dependencies {
     implementation("com.facebook.react:react-android")
     implementation("com.facebook.react:flipper-integration")
     implementation ("com.facebook.fresco:animated-gif:3.1.0")
-
+implementation(project(":react-native-html-to-pdf"))
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
