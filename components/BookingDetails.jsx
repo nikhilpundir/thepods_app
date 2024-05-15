@@ -4,11 +4,12 @@ import QRCode from 'react-native-qrcode-svg';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import { BookingContext } from '../context/BookingContext';
 import Toast from "react-native-toast-message";
+import { AuthContext } from '../context/AuthContext';
 const BookingDetails = ({ route, navigation }) => {
     const { _id, numberOfClassicPods, numberOfPremiumPods, numberOfWomenPods, bookingDate, checkIn, checkOut } = route.params;
     
-    const {bookingCancellation,isLoading}=useContext(BookingContext);
-
+    const {bookingCancellation,isLoading,getBooking}=useContext(BookingContext);
+    const { user } = useContext(AuthContext);
     const formatDate = (date) => new Date(date).toLocaleDateString();
 
     const [isConfirmingCancellation, setIsConfirmingCancellation] = useState(false);
@@ -25,7 +26,7 @@ const BookingDetails = ({ route, navigation }) => {
         // Set loading to false after some time (simulating data loading)
         navigation.goBack()
           }, 2000);
-          
+          getBooking({ userId: user?._id });
         
         
     };

@@ -1,79 +1,111 @@
-import { ActivityIndicator, FlatList, Image, Pressable, RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+
 import React, { useContext, useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Image, Pressable, SafeAreaView, FlatList, RefreshControl } from 'react-native';
 import { bookingsBg } from '../assets/images';
 import { BookingDetails, BookingsListItem } from '../components';
 import { BookingContext } from '../context/BookingContext';
 import { AuthContext } from '../context/AuthContext';
 import Icon from 'react-native-vector-icons/FontAwesome6';
-const Bookings = ({navigation}) => {
+
+const Bookings = ({ navigation }) => {
   const { getBooking, isLoading, bookings } = useContext(BookingContext);
   const { user } = useContext(AuthContext);
-  const [filteredBookings, setFilteredBookings] = useState([]);
+  const [currentBookings, setCurrentBookings] = useState([]);
+  const [previousBookings, setPreviousBookings] = useState([]);
+  const [showCurrentBookings, setShowCurrentBookings] = useState(true);
 
+  useEffect(()=>{
+    getBooking({ userId: user?._id });
+  },[])
   useEffect(() => {
-    // Filter bookings where isCancelled is false whenever the bookings array changes
-    const filtered = bookings?.filter(booking => {
-      // Filter out cancelled bookings and old bookings
-      return !booking.isCancelled && new Date(booking.checkOut) > new Date();
+    
+    const currentDate = new Date();
+    const previous = [];
+    const current = [];
+    bookings?.forEach(booking => {
+      if(!booking.isCancelled){
+        if (new Date(booking.checkOut) < currentDate) {
+          previous.push(booking);
+        } else {
+          current.push(booking);
+        }
+      }
+     
     });
-    setFilteredBookings(filtered);
+    setPreviousBookings(previous);
+    setCurrentBookings(current);
   }, [bookings]);
 
   const onRefresh = () => {
     getBooking({ userId: user?._id });
   };
- 
-const handleBookingDetail=(booking)=>{
-  navigation.navigate("BookingDetails",booking)
-}
-  useEffect(() => {
-    getBooking({ userId: user?._id });
-  }, []);
-  
+
+  const handleBookingDetail = (booking) => {
+    navigation.navigate("BookingDetails", booking);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      
       <View style={styles.heroContainer}>
         <Text style={styles.heroHeading}>Bookings</Text>
         <Image source={bookingsBg} style={styles.heroBg} />
       </View>
+      <View style={styles.buttonsContainer}>
+        <Pressable style={[styles.button, showCurrentBookings ? styles.activeButton : null]} onPress={() => setShowCurrentBookings(true)}>
+          <Text style={styles.buttonText}>Current Bookings</Text>
+        </Pressable>
+        <Pressable style={[styles.button, !showCurrentBookings ? styles.activeButton : null]} onPress={() => setShowCurrentBookings(false)}>
+          <Text style={styles.buttonText}>Previous Bookings</Text>
+        </Pressable>
+      </View>
       <View style={styles.bookingContainer}>
-        <FlatList
-          data={filteredBookings?.length > 0 ? filteredBookings : bookings}
-          renderItem={({ item }) => (
-            <View>
+        <Text style={{alignSelf:"center"}}>Swipe to refresh</Text>
+        {showCurrentBookings ? (
+          <FlatList
+            data={currentBookings}
+            renderItem={({ item }) => (
               <Pressable onPress={() => handleBookingDetail(item)}>
-              <BookingsListItem
-                key={item._id}
-                // bookingId={item._id}
-                numberOfClassicPods={item.numberOfClassicPods}
-                numberOfWomenPods={item.numberOfWomenPods}
-                numberOfPremiumPods={item.numberOfPremiumPods}
-                bookingDate={item.bookingDate}
-                checkIn={item.checkIn}
-                checkOut={item.checkOut}
-              />
+                <BookingsListItem
+                  numberOfClassicPods={item.numberOfClassicPods}
+                  numberOfWomenPods={item.numberOfWomenPods}
+                  numberOfPremiumPods={item.numberOfPremiumPods}
+                  bookingDate={item.bookingDate}
+                  checkIn={item.checkIn}
+                  checkOut={item.checkOut}
+                />
               </Pressable>
-            </View>
-          )}
-          keyExtractor={(item, index) => index.toString()}
-          refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefresh} colors={['#9Bd35A', '#689F38']} />}
-        />
+            )}
+            keyExtractor={(item, index) => index.toString()}
+            refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefresh} colors={['#9Bd35A', '#689F38']} />}
+          />
+        ) : (
+          <FlatList
+            data={previousBookings}
+            renderItem={({ item }) => (
+              
+                <BookingsListItem
+                  numberOfClassicPods={item.numberOfClassicPods}
+                  numberOfWomenPods={item.numberOfWomenPods}
+                  numberOfPremiumPods={item.numberOfPremiumPods}
+                  bookingDate={item.bookingDate}
+                  checkIn={item.checkIn}
+                  checkOut={item.checkOut}
+                />
+              
+            )}
+            keyExtractor={(item, index) => index.toString()}
+            refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefresh} colors={['#9Bd35A', '#689F38']} />}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
 };
 
-export default Bookings;
-
 const styles = StyleSheet.create({
-  backIcon: {
-    padding: 15,
-    width: 60,
-},
-  container:{
-     backgroundColor: '#ffffff',
-     flex:1
+  container: {
+    flex: 1,
+    backgroundColor: '#ffffff',
   },
   heroContainer: {
     backgroundColor: '#DFE2FA',
@@ -81,20 +113,39 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-around',
-    alignItems:"center"
+    alignItems: 'center',
   },
   heroBg: {
-    height: 155,
-    width: 240,
+    height: 120,
+    width: 180,
   },
   heroHeading: {
-    fontSize: 50,
-    color:"black",
-    // marginTop: 50,
-    
+    fontSize: 40,
+    color: 'black',
+  },
+  buttonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginVertical: 10,
+  },
+  button: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 5,
+    marginHorizontal: 5,
+    backgroundColor: '#ccc',
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  activeButton: {
+    backgroundColor: '#DFE2FA',
   },
   bookingContainer: {
-    flex: 1, // Allow the container to occupy available space
-    padding: 20,
+    flex: 1,
+    padding: 10,
   },
 });
+
+export default Bookings;

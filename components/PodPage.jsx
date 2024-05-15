@@ -1,4 +1,4 @@
-import { Dimensions, Image, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, Image, Linking, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -17,6 +17,7 @@ const PodPage = ({ route, navigation }) => {
       }
     return (
         <SafeAreaView style={styles.main}>
+            <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
             <Pressable onPress={HandleBack} style={styles.backIcon}>
                 <Icon name="chevron-back-outline" size={23} color="black" />
@@ -42,6 +43,7 @@ const PodPage = ({ route, navigation }) => {
                 </View>
             </View>
         </View>
+        </ScrollView>
         </SafeAreaView>
     )
 }
@@ -99,7 +101,8 @@ const styles = StyleSheet.create({
     },
     contactText:{
         fontSize:20,
-        textAlign:"center"
+        textAlign:"center",
+        color:"black"
     },
     BookText:{
         fontSize:20,

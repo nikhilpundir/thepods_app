@@ -85,7 +85,7 @@ const HomeScreen = ({ navigation }) => {
                 </Pressable>
               </View>
 
-              <View style={[styles.item, { height: screenHeight * 0.1, width: screenWidth * 0.7 }, styles.ab]} >
+              <View style={[styles.item, {  width: screenWidth * 0.7 }, styles.ab]} >
 
                 <Text style={styles.abText}>Our classic pods are the most economical and value for money stay.</Text>
 
@@ -136,7 +136,7 @@ const HomeScreen = ({ navigation }) => {
               </View>
             </View>
             <View style={styles.column}>
-              <View style={[styles.item, { height: screenHeight * 0.1, width: screenWidth * 0.7 }, styles.ea]} >
+              <View style={[styles.item, {  width: screenWidth * 0.7 }, styles.ea]} >
               
                 <Text style={styles.eaText}>Feel the premiumness and enjoy the ambiance inside our premium pods.</Text>
               
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
   },
   ab: {
     backgroundColor: "#FFEAEA",
-    padding: 20,
+    padding: 26,
     display: "flex",
     alignItems: "center",
     justifyContent: "center"
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
   },
   ea: {
     backgroundColor: "black",
-    padding: 20,
+    padding: 26,
     display: "flex",
     alignItems: "center",
     justifyContent: "center"

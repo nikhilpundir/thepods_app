@@ -107,7 +107,8 @@ const styles = StyleSheet.create({
   },headingText:{
       fontSize:27,
       fontWeight:'bold',
-      paddingHorizontal:10
+      paddingHorizontal:10,
+      color:"black"
   },formContainer:{
     alignSelf:"flex-start",
     width:"100%",
@@ -116,7 +117,7 @@ const styles = StyleSheet.create({
   inputBox:{
     
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: 'black',
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom:10
@@ -142,7 +143,8 @@ const styles = StyleSheet.create({
     paddingTop:20
   },
   signupText:{
-    fontSize:15
+    fontSize:15,
+    color:"black"
     
   },
   signupTextblue:{

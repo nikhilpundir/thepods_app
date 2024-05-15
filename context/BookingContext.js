@@ -26,6 +26,11 @@ export const BookingContextProvider=({children})=>{
         })
         .catch(error=>{
             console.log(error);
+            Toast.show({
+                type: 'error',
+                text1:'Some Error Occured',
+                text2: 'Please try again in Some time!'
+            });
         }).finally(()=>{
             setIsLoading(false);
         })
@@ -43,6 +48,11 @@ export const BookingContextProvider=({children})=>{
         })
         .catch(error=>{
             console.log(error);
+            Toast.show({
+                type: 'error',
+                text1:'Some Error Occured',
+                text2: 'Please try again in Some time!'
+            });
         }).finally(()=>{
             setIsLoading(false);
         })
