@@ -7,6 +7,7 @@ import Book from './Book'
 import ProfileMain from './ProfileMain'
 import Bookings from './Bookings'
 import PrivacyPolicy from './PrivacyPolicy'
+import AdminReportScreen from './AdminReportScreen'
 export {
     HomeScreen,
     OnBoard,
@@ -16,5 +17,6 @@ export {
     Book,
     ProfileMain,
     Bookings,
-    PrivacyPolicy
+    PrivacyPolicy,
+    AdminReportScreen
 }

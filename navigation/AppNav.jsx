@@ -7,6 +7,7 @@ import AppStack from './AppStack';
 import { AuthContext } from '../context/AuthContext';
 import Toast from 'react-native-toast-message';
 import { loadingGif } from '../assets/images';
+import { AdminReportScreen } from '../views';
 
 
 const Stack = createNativeStackNavigator();
@@ -25,7 +26,6 @@ const AppNav = () => {
       <Image source={loadingGif} style={styles.loadingImage} />
     </View>
   );
-  
 
   if (isContentLoading) {
     // Render a loading indicator while loading
@@ -37,13 +37,25 @@ const AppNav = () => {
   }
   return (
     <>
-      <NavigationContainer>
-          <Stack.Navigator screenOptions={{headerShown:false}}>
-            {user !== null ?<Stack.Screen name="App" component={AppStack} />:<Stack.Screen name="Auth" component={AuthStack} />}
-          </Stack.Navigator>
-        </NavigationContainer>
-        <Toast />
-     </>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {user !== null ? (
+          // Check if the user has an admin role
+          user.role === 'admin' ? (
+            // Render admin screens for admin users
+            <Stack.Screen name="AdminApp" component={AdminReportScreen} />
+          ) : (
+            // Render app screens for non-admin users
+            <Stack.Screen name="App" component={AppStack} />
+          )
+        ) : (
+          // Render authentication screens for unauthenticated users
+          <Stack.Screen name="Auth" component={AuthStack} />
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
+    <Toast />
+  </>
   )
 }
 

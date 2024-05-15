@@ -1,4 +1,4 @@
-import { Image, SafeAreaView, StyleSheet, Text, View, TextInput, Pressable, ScrollView } from 'react-native'
+import { Image, SafeAreaView, StyleSheet, Text, View, TextInput, Pressable, ScrollView, ActivityIndicator } from 'react-native'
 import React,{useContext} from 'react'
 import {signupImg} from "../assets/images"
 import { Formik} from 'formik';
@@ -6,11 +6,18 @@ import * as Yup from 'yup';
 import colors from '../assets/colors';
 import { AuthContext } from '../context/AuthContext';
 const Signup = ({ navigation }) => {
-  const {signup}=useContext(AuthContext);
+  const {signup,isLoading}=useContext(AuthContext);
 
   const formSubmit=(values)=>{
     signup(values);
     // navigation.navigate('OtpVerification')
+  }
+  if(isLoading){
+    return(
+      <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+      <ActivityIndicator size={'large'} />
+    </View>
+    )
   }
   return (
     <SafeAreaView>
