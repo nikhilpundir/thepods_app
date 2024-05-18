@@ -73,63 +73,7 @@ const PrivacyPolicy = ({ navigation }) => {
                 Our services may contain links to third-party websites or services that are not owned or controlled by us. We are not responsible for the privacy practices or content of these third-party sites. We recommend reviewing the privacy policies of any third-party sites you visit.
             </Text>
 
-            <Text style={styles.subHeading}>Data Protection Officer:</Text>
-            <Text style={styles.paragraph}>
-                We have appointed a Data Protection Officer (DPO) to oversee our privacy practices and ensure compliance with applicable data protection laws. If you have any questions or concerns regarding our privacy practices or this Privacy Policy, you may contact our DPO at dpo@thepods.com.
-            </Text>
-
-            <Text style={styles.subHeading}>Effective Date:</Text>
-            <Text style={styles.paragraph}>
-                This Privacy Policy is effective as of 04/01/2024 and applies to all users of ThePods services. We may update or modify this Privacy Policy from time to time, and any changes will be reflected on this page. We encourage you to review this Privacy Policy periodically for any updates.
-            </Text>
-            <Text style={styles.subHeading}>Data Subject Rights:</Text>
-            <Text style={styles.paragraph}>
-                As a data subject, you have certain rights under applicable data protection laws. These rights may include the right to access, rectify, erase, restrict processing, and object to the processing of your personal data. You may also have the right to data portability and the right not to be subject to automated decision-making. If you wish to exercise any of these rights or have questions about your rights, please contact us using the information provided in the "Contact Us" section below.
-            </Text>
-
-            <Text style={styles.subHeading}>Data Processing Legal Basis:</Text>
-            <Text style={styles.paragraph}>
-                We will only process your personal data where we have a legal basis to do so. This may include processing necessary for the performance of a contract, compliance with a legal obligation, protection of vital interests, consent, or legitimate interests pursued by us or a third party. Where we rely on your consent to process your personal data, you have the right to withdraw your consent at any time.
-            </Text>
-
-            <Text style={styles.subHeading}>Data Breach Notification:</Text>
-            <Text style={styles.paragraph}>
-                In the event of a data breach that may affect your personal data, we will notify you and the relevant data protection authorities in accordance with applicable laws and regulations. We will also take appropriate measures to mitigate the impact of the breach and prevent future incidents.
-            </Text>
-
-            <Text style={styles.subHeading}>Retention of Communication Data:</Text>
-            <Text style={styles.paragraph}>
-                We may retain records of communications with you, including emails, chat transcripts, and customer service interactions, for quality assurance, training, and compliance purposes. These records may contain personal data and will be protected in accordance with this Privacy Policy.
-            </Text>
-
-            <Text style={styles.subHeading}>Data Subject Requests:</Text>
-            <Text style={styles.paragraph}>
-                If you are a data subject and wish to exercise your rights under applicable data protection laws, including the right to access, rectify, erase, restrict processing, or object to processing, please submit your request in writing to our Data Protection Officer at the address provided in the "Contact Us" section below. We will respond to your request in accordance with applicable laws and regulations.
-            </Text>
-
-            <Text style={styles.subHeading}>Updates to Privacy Policy:</Text>
-            <Text style={styles.paragraph}>
-                We reserve the right to update or modify this Privacy Policy at any time to reflect changes in our practices, legal requirements, or business operations. We will notify you of any material changes by posting the updated Privacy Policy on our website or through other appropriate means. Your continued use of our services after the effective date of the revised Privacy Policy constitutes acceptance of the updated terms.
-            </Text>
-            <Text style={styles.subHeading}>Data Sharing and Selling:</Text>
-            <Text style={styles.paragraph}>
-                We do not sell or rent your personal information to third parties for their marketing purposes. However, we may share your information with trusted third-party service providers who assist us in operating our business, providing services to you, or fulfilling your requests. These third parties are contractually obligated to use your information only as necessary to provide the requested services and to adhere to applicable data protection laws.
-            </Text>
-
-            <Text style={styles.subHeading}>International Data Transfers:</Text>
-            <Text style={styles.paragraph}>
-                Your personal information may be transferred to, stored, and processed in countries outside of your jurisdiction where data protection laws may differ from those in your country. By using our services, you consent to the transfer of your information to these countries for processing and storage in accordance with this Privacy Policy.
-            </Text>
-
-            <Text style={styles.subHeading}>Compliance with Legal Obligations:</Text>
-            <Text style={styles.paragraph}>
-                We may disclose your personal information when required to do so by law, regulation, legal process, or governmental request. We may also disclose your information to enforce our terms of service, protect our rights, property, or safety, or the rights, property, or safety of others.
-            </Text>
-
-            <Text style={styles.subHeading}>Data Retention and Deletion:</Text>
-            <Text style={styles.paragraph}>
-                We retain your personal information for as long as necessary to fulfill the purposes outlined in this Privacy Policy or as required by law. When we no longer require your information, we will securely delete or anonymize it to prevent unauthorized access.
-            </Text>
+            
             <Text style={styles.subHeading}>Contact Us:</Text>
             <Text style={styles.paragraph}>
                 If you have any questions, concerns, or feedback regarding this Privacy Policy or our privacy practices, please contact us at support@thepods.com.

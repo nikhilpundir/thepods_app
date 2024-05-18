@@ -49,7 +49,7 @@ const ProfileMain = ({ navigation }) => {
           </ImageBackground>
 
           <View style={styles.main}>
-            <ProfileListItem itemName="Settings" iconName="setting" />
+            
             <ProfileListItem itemName="Call Us" iconName="phone" itemHandler={handleCall}/>
             <ProfileListItem itemName="Email Us" iconName="mail" itemHandler={handleMail}/>
             <ProfileListItem itemName="Help" iconName="questioncircleo" itemHandler={handleHelp}/>
